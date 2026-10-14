@@ -8,6 +8,4 @@
 
 MCSplat is a multi-view consistent feed-forward Gaussian splatting framework for driving-scene reconstruction from sparse multi-view images.
 
-**Research code:** Coming soon.
-
 3D visualization powered by [PlayCanvas SuperSplat Viewer](https://github.com/playcanvas/supersplat-viewer).
