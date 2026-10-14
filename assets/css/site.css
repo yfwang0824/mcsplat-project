@@ -543,6 +543,21 @@ input[type="range"] { accent-color: var(--accent); }
   .scene-thumb { width: 124px; }
   .splat-tip { font-size: 11px; }
 }
+/* Fit the complete paper header into shorter laptop browser windows. */
+@media (min-width: 901px) {
+  .site-nav { min-height: clamp(56px, 8svh, 74px); }
+  .hero { padding: clamp(8px, 1.5svh, 16px) 0 28px; }
+  .project-name { font-size: clamp(50px, 9svh, 80px); line-height: 1.1; margin-bottom: 10px; }
+  .project-title { font-size: clamp(23px, 4svh, 34px); line-height: 1.25; text-wrap: balance; }
+  .page-title { margin-bottom: 14px; }
+  .authors { margin-bottom: 10px; }
+  .author-row { margin-top: 4px; }
+  .author { font-size: 14px; line-height: 1.5; }
+  .affiliations { font-size: 12px; line-height: 1.65; }
+  .author-notes { margin-top: 10px; font-size: 10.5px; line-height: 1.6; }
+  .hero-actions { margin-top: 12px; }
+  .hero-actions .action-link { padding: 10px 20px; }
+}
 /* Keep each demo's scene choices beside its visualization. */
 .demo-section { padding: 24px; }
 .demo-section .demo-heading { margin-bottom: 18px; }
