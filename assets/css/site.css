@@ -490,8 +490,6 @@ input[type="range"] { accent-color: var(--accent); }
 .scene-thumb img { border-radius: 9px; }
 .scene-thumb-caption { font-size: 11px; font-weight: 650; }
 .scene-thumb.active { background: var(--accent); box-shadow: 0 0 0 3px #315fe516; }
-footer { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 14px; margin-top: 44px; padding: 22px 4px 0; border-top: 1px solid #cfdaeb; color: #647895; font-size: 11px; }
-footer a { text-decoration: none; font-weight: 650; }
 @media (max-width: 900px) {
   .wrap { padding-left: 24px; padding-right: 24px; }
   .abstract-section { grid-template-columns: 1fr; gap: 20px; padding: 28px; }
@@ -543,7 +541,6 @@ footer a { text-decoration: none; font-weight: 650; }
   .scene-thumbs { gap: 10px; }
   .scene-thumb { width: 124px; }
   .splat-tip { font-size: 11px; }
-  footer { font-size: 10px; }
 }
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
