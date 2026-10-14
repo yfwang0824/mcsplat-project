@@ -534,13 +534,15 @@
     renderBgtThumbs();
     startWhenVisible(document.getElementById("bgtSection"), () => selectBgtScene(0, false));
 
+    // One-scene compression trial; keep the regular project page on the original assets.
+    const scene070Format = new URLSearchParams(window.location.search).get("sog") === "1" ? "sog" : "ply";
     const SCENES = [
       {
         id: "070",
         label: "Scene 070",
         thumb: "assets/thumbs/scene_070.jpg",
-        uni: "../assets/gaussians/unisplat_070_000000.ply",
-        mc: "../assets/gaussians/scene_070_000000.ply",
+        uni: `../assets/gaussians/unisplat_070_000000.${scene070Format}`,
+        mc: `../assets/gaussians/scene_070_000000.${scene070Format}`,
       },
       {
         id: "040",
