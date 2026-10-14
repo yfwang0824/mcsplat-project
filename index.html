@@ -22,7 +22,6 @@
     </nav>
     <main id="top">
       <header class="hero" aria-labelledby="paper-title">
-        <p class="eyebrow">Multi-view consistency · Driving-scene reconstruction</p>
         <h1 class="page-title" id="paper-title">
           <span class="project-name">MCSplat<span class="sr-only">: </span></span>
           <span class="project-title"><span class="no-wrap">Multi-View</span> Photometric and Geometric Consistent <span class="no-wrap">Feed-Forward</span> Gaussian Splatting for Driving Scenes</span>
@@ -66,25 +65,22 @@
 
       <section class="abstract-section" id="abstract" aria-labelledby="abstract-title">
         <div>
-          <p class="eyebrow">The research</p>
           <h2 class="section-title" id="abstract-title">Abstract</h2>
         </div>
         <div class="abstract-copy">
-          <p>Driving-scene reconstruction via feed-forward Gaussian splatting from sparse multi-view images remains challenging due to two factors. First, cross-camera photometric inconsistency—caused by variations in exposure, ISP, and illumination—can be incorrectly absorbed into Gaussian geometry. Second, unreliable local geometric supervision arises from normal-based constraints near depth discontinuities.</p>
-          <p>To address these issues, we present <strong>MCSplat</strong>, a multi-view consistent feed-forward Gaussian splatting framework for driving scenes. MCSplat constructs a canonical appearance space from depth-guided multi-camera correspondences to decouple geometry learning from camera-specific appearance. A multi-scale Bilateral Grid Transformer restores raw camera appearance from canonical renderings, enabling photometric supervision without contaminating Gaussian geometry. To improve local geometric reliability, we estimate Fisher-information-based uncertainty from photometric sensitivity and use it to adaptively weight surface-oriented self-supervision. Experiments on the Waymo Dataset show that MCSplat achieves state-of-the-art performance on both the full validation set and an appearance-challenging subset with strong cross-camera photometric inconsistency, demonstrating improved reconstruction quality and more consistent novel-view geometry.</p>
+          <p>Driving-scene reconstruction via feed-forward Gaussian splatting from sparse multi-view images remains challenging due to two factors. First, cross-camera photometric inconsistency, caused by variations in exposure, ISP, and illumination, can be incorrectly absorbed into Gaussian geometry. Second, unreliable local geometric supervision arises from normal-based constraints near depth discontinuities.</p>
+          <p>To address these issues, we present <strong>MCSplat</strong>, a multi-view consistent feed-forward Gaussian splatting framework for driving scenes. MCSplat constructs a canonical appearance space from depth-guided multi-camera correspondences to decouple geometry learning from camera-specific appearance. A multi-scale Bilateral Grid Transformer restores raw camera appearance from canonical renderings, enabling photometric supervision without contaminating Gaussian geometry. To improve local geometric reliability, we estimate Fisher-information-based uncertainty from photometric sensitivity and use it to adaptively weight surface-oriented self-supervision. Extensive experiments on Waymo and nuScenes demonstrate improved image reconstruction quality and generalization across driving datasets. Geometry-oriented evaluations further reveal enhanced cross-view depth consistency and local surface-normal agreement, while qualitative results show fewer geometric artifacts and more coherent structures across overlapping views.</p>
         </div>
       </section>
 
       <section class="method-section" id="method" aria-labelledby="method-title">
         <div class="section-heading">
-          <div><p class="eyebrow">The pipeline</p><h2 class="section-title" id="method-title">Method overview</h2></div>
-          <a class="figure-link" href="assets/figures/pipeline.pdf" target="_blank" rel="noopener">View full-resolution PDF ↗</a>
+          <h2 class="section-title" id="method-title">Method overview</h2>
         </div>
         <figure class="pipeline-figure">
-          <a class="pipeline-image" href="assets/figures/pipeline.pdf" target="_blank" rel="noopener" aria-label="Open the full-resolution MCSplat pipeline figure">
+          <div class="pipeline-image">
             <img src="assets/figures/pipeline.png" width="3000" height="1847" loading="lazy" decoding="async" alt="MCSplat pipeline: (a) depth-guided canonical appearance construction, (b) multiscale 3D bilateral grid prediction and camera appearance recovery, and (c) Fisher-information-based uncertainty-aware geometric self-supervision." />
-          </a>
-          <figcaption><strong>MCSplat overview.</strong> (a) Depth-guided correspondences construct a canonical appearance space. (b) A multi-scale Bilateral Grid Transformer recovers camera-specific appearance. (c) Fisher-information-based uncertainty adaptively weights geometric self-supervision.</figcaption>
+          </div>
         </figure>
       </section>
 
@@ -154,11 +150,6 @@
 
     <section id="splatSection">
       <div class="demo-heading"><span class="demo-number" aria-hidden="true">02</span><div><p class="eyebrow">Gaussian reconstruction</p><h3 class="card-subtitle">UniSplat vs MCSplat in 3D</h3></div></div>
-      <div class="label-row">
-        <span></span>
-        <span id="splatSceneLabel">Scene 070 · frame 000000</span>
-      </div>
-
       <div class="splat-main">
         <div class="splat-row">
           <div class="splat-col">
@@ -573,7 +564,6 @@
     const splatPhUni = document.getElementById("splatPhUni");
     const splatPhMc = document.getElementById("splatPhMc");
     const splatLoadStatus = document.getElementById("splatLoadStatus");
-    const splatSceneLabel = document.getElementById("splatSceneLabel");
     const sceneThumbs = document.getElementById("sceneThumbs");
     const scenePrev = document.getElementById("scenePrev");
     const sceneNext = document.getElementById("sceneNext");
@@ -605,7 +595,6 @@
       if (index < 0 || index >= SCENES.length) return;
       sceneIndex = index;
       const scene = SCENES[sceneIndex];
-      splatSceneLabel.textContent = `${scene.label} · frame 000000`;
       renderThumbs();
       loadSceneViewers(scene);
       const active = sceneThumbs.querySelector(".scene-thumb.active");

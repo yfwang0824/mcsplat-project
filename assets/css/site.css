@@ -92,19 +92,14 @@ section {
   display: grid; grid-template-columns: 170px minmax(0, 1fr); gap: 30px;
   padding: 36px; background: linear-gradient(130deg, #e7edfc 0%, #f2f5ff 58%, #eef4ff 100%);
 }
-.abstract-section .eyebrow { margin-bottom: 10px; }
 .abstract-copy { font-size: 15px; line-height: 1.95; color: #344760; }
 .abstract-copy p { margin: 0 0 15px; }
 .abstract-copy p:last-child { margin-bottom: 0; }
 .abstract-copy strong { color: #234fbd; }
 .section-heading { display: flex; justify-content: space-between; align-items: flex-end; gap: 24px; margin-bottom: 24px; }
-.section-heading .eyebrow { margin-bottom: 7px; }
-.figure-link { flex-shrink: 0; font-size: 12px; font-weight: 700; text-decoration: none; }
 .pipeline-figure { margin: 0; }
-.pipeline-image { display: block; background: white; border: 1px solid #e1e8f3; border-radius: 14px; overflow: hidden; cursor: zoom-in; }
+.pipeline-image { display: block; background: white; border: 1px solid #e1e8f3; border-radius: 14px; overflow: hidden; }
 .pipeline-image img { width: 100%; height: auto; display: block; }
-.pipeline-figure figcaption { margin-top: 18px; max-width: 930px; font-size: 12px; color: var(--muted); line-height: 1.85; }
-.pipeline-figure figcaption strong { color: #344c73; }
 .demo-intro { padding: 68px 4px 0; }
 .demo-intro .section-title { font-size: 35px; letter-spacing: -.055em; }
 .demo-intro p:last-child { margin: 10px 0 0; font-size: 14px; color: var(--muted); }
@@ -513,7 +508,6 @@ footer a { text-decoration: none; font-weight: 650; }
   .nav-links { gap: 15px; font-size: 11px; }
   .nav-github { display: none; }
   .hero { padding: 40px 0 32px; }
-  .hero > .eyebrow { font-size: 9px; max-width: 32ch; margin-left: auto; margin-right: auto; }
   .project-name { margin-bottom: 15px; font-size: 64px; }
   .project-title { font-size: 25px; line-height: 1.35; }
   .page-title { margin-bottom: 25px; }
@@ -530,7 +524,6 @@ footer a { text-decoration: none; font-weight: 650; }
   .abstract-copy { font-size: 13px; line-height: 1.9; }
   .section-title { font-size: 24px; }
   .section-heading { align-items: flex-start; flex-direction: column; gap: 12px; margin-bottom: 20px; }
-  .pipeline-figure figcaption { font-size: 11px; }
   .demo-intro { padding-top: 44px; }
   .demo-intro .section-title { font-size: 29px; }
   .demo-intro p:last-child { font-size: 12px; }
