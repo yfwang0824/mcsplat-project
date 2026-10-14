@@ -5,467 +5,97 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="description" content="Interactive comparisons for MCSplat: Multi-View Photometric and Geometric Consistent Feed-Forward Gaussian Splatting for Driving Scenes." />
   <title>MCSplat: Multi-View Photometric and Geometric Consistent Feed-Forward Gaussian Splatting for Driving Scenes</title>
-  <style>
-    :root {
-      --bg: #f4f4f1;
-      --ink: #1a1a1a;
-      --muted: #5c5c5c;
-      --line: #d6d6d0;
-      --panel: #ffffff;
-      --accent: #0b3d5c;
-      --on: #1f6f4a;
-      --off: #8a4b1f;
-    }
-    * { box-sizing: border-box; }
-    html, body {
-      margin: 0;
-      padding: 0;
-      background: var(--bg);
-      color: var(--ink);
-      font-family: "IBM Plex Sans", "Source Sans 3", "Helvetica Neue", Arial, sans-serif;
-      line-height: 1.45;
-    }
-    .wrap {
-      max-width: 1120px;
-      margin: 0 auto;
-      padding: 28px 18px 64px;
-    }
-    header h2 {
-      margin: 0 0 6px;
-      font-size: 1.15rem;
-      font-weight: 650;
-      letter-spacing: -0.02em;
-    }
-    .card-subtitle {
-      margin: 0 0 8px;
-      color: #000;
-      font-size: 1.12rem;
-      font-weight: 700;
-      line-height: 1.3;
-      letter-spacing: -0.01em;
-    }
-    .card-lead {
-      margin: 0 0 14px;
-      color: var(--muted);
-      font-size: 0.95rem;
-      max-width: 72ch;
-    }
-    .page-title {
-      margin: 0 0 16px;
-      text-align: center;
-      color: #000;
-      font-size: clamp(1.45rem, 2.6vw, 1.95rem);
-      font-weight: 800;
-      line-height: 1.25;
-      letter-spacing: -0.02em;
-    }
-    header p {
-      margin: 0;
-      color: var(--muted);
-      font-size: 0.95rem;
-      max-width: 62ch;
-    }
-    .badge {
-      display: inline-block;
-      margin-bottom: 14px;
-      padding: 3px 9px;
-      border: 1px solid var(--line);
-      background: var(--panel);
-      font-size: 0.75rem;
-      letter-spacing: 0.04em;
-      text-transform: uppercase;
-      color: var(--muted);
-    }
-    section {
-      margin-top: 22px;
-      background: var(--panel);
-      border: 1px solid var(--line);
-      padding: 14px;
-    }
-    .label-row {
-      display: flex;
-      justify-content: space-between;
-      align-items: baseline;
-      gap: 12px;
-      margin-bottom: 8px;
-      font-size: 0.82rem;
-      color: var(--muted);
-    }
-    .label-row strong { color: var(--ink); font-weight: 600; }
-    .stage {
-      position: relative;
-      width: 100%;
-      background: #111;
-      overflow: hidden;
-      aspect-ratio: 2590 / 350;
-    }
-    .stage img, .stage canvas {
-      display: block;
-      width: 100%;
-      height: 100%;
-      object-fit: fill;
-      user-select: none;
-      -webkit-user-drag: none;
-    }
-    .compare {
-      position: relative;
-      width: 100%;
-      aspect-ratio: 2590 / 350;
-      overflow: hidden;
-      background: #111;
-      cursor: ew-resize;
-      touch-action: none;
-      container-type: inline-size;
-    }
-    .compare .layer {
-      position: absolute;
-      inset: 0;
-      overflow: hidden;
-    }
-    /* Keep full-frame width; clip via overflow, do NOT shrink the image. */
-    .compare .layer img {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: var(--compare-w, 100cqw);
-      height: 100%;
-      max-width: none;
-      object-fit: fill;
-      user-select: none;
-      -webkit-user-drag: none;
-    }
-    .compare .on-layer {
-      width: 50%;
-      border-right: 2px solid #fff;
-      z-index: 2;
-    }
-    .compare .handle {
-      position: absolute;
-      top: 0;
-      bottom: 0;
-      left: 50%;
-      width: 2px;
-      transform: translateX(-1px);
-      z-index: 3;
-      pointer-events: none;
-    }
-    .compare .handle::after {
-      content: "";
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      width: 28px;
-      height: 28px;
-      border: 2px solid #fff;
-      background: rgba(0,0,0,0.45);
-      border-radius: 50%;
-      transform: translate(-50%, -50%);
-    }
-    .chip {
-      position: absolute;
-      top: 10px;
-      z-index: 4;
-      padding: 3px 8px;
-      font-size: 0.72rem;
-      font-weight: 600;
-      letter-spacing: 0.03em;
-      color: #fff;
-      background: rgba(0,0,0,0.55);
-      pointer-events: none;
-    }
-    .chip.left { left: 10px; }
-    .chip.right { right: 10px; }
-    .chip.on { background: rgba(31,111,74,0.85); }
-    .chip.off { background: rgba(138,75,31,0.85); }
-
-    .controls {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 12px 18px;
-      align-items: center;
-      margin-top: 12px;
-    }
-    button, .toggle {
-      appearance: none;
-      border: 1px solid var(--line);
-      background: #fafaf7;
-      color: var(--ink);
-      padding: 8px 12px;
-      font: inherit;
-      font-size: 0.88rem;
-      cursor: pointer;
-    }
-    button:hover, .toggle:hover { border-color: #aaa; }
-    button.active {
-      background: var(--accent);
-      border-color: var(--accent);
-      color: #fff;
-    }
-    .toggle-group {
-      display: inline-flex;
-      border: 1px solid var(--line);
-    }
-    .toggle-group button {
-      border: 0;
-      border-right: 1px solid var(--line);
-      min-width: 118px;
-    }
-    .toggle-group button:last-child { border-right: 0; }
-    .toggle-group button.on.active {
-      background: var(--on);
-      border-color: var(--on);
-      color: #fff;
-    }
-    .toggle-group button.off.active {
-      background: var(--off);
-      border-color: var(--off);
-      color: #fff;
-    }
-    .slider-wrap {
-      flex: 1 1 220px;
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      min-width: 200px;
-    }
-    .slider-wrap label {
-      font-size: 0.8rem;
-      color: var(--muted);
-      white-space: nowrap;
-    }
-    input[type="range"] { width: 100%; }
-    .status {
-      margin-top: 8px;
-      font-size: 0.8rem;
-      color: var(--muted);
-    }
-    .note {
-      margin-top: 18px;
-      font-size: 0.86rem;
-      color: var(--muted);
-    }
-    .note code,
-    .note kbd {
-      font-family: "IBM Plex Mono", ui-monospace, monospace;
-      font-size: 0.84em;
-      background: #eee;
-      padding: 1px 5px;
-    }
-    .note kbd {
-      border: 1px solid #ccc;
-      border-bottom-width: 2px;
-      border-radius: 3px;
-    }
-    .splat-tip {
-      margin: 14px 0 6px;
-      text-align: center;
-      font-size: 0.9rem;
-      font-style: italic;
-      color: #c62828;
-      font-weight: 700;
-    }
-    .splat-tip strong { color: inherit; font-weight: 700; }
-    .splat-tip kbd {
-      font-family: "IBM Plex Mono", ui-monospace, monospace;
-      font-size: 0.9em;
-      font-weight: 700;
-      font-style: normal;
-      color: #c62828;
-      background: #fdecea;
-      padding: 1px 6px;
-      border: 1px solid #ef9a9a;
-      border-bottom-width: 2px;
-      border-radius: 3px;
-    }
-    .splat-load-status {
-      display: block;
-      text-align: center;
-      margin: 0 0 10px;
-      font-size: 0.82rem;
-      color: var(--muted);
-    }
-    .splat-main {
-      border-radius: 0 0 14px 14px;
-      overflow: hidden;
-    }
-    .splat-row {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 10px;
-      align-items: stretch;
-    }
-    .splat-col {
-      display: flex;
-      flex-direction: column;
-      min-width: 0;
-    }
-    .splat-col-label {
-      margin-bottom: 6px;
-      font-size: 0.82rem;
-      color: var(--muted);
-    }
-    .splat-col-label strong {
-      color: var(--ink);
-      font-weight: 700;
-    }
-    .splat-wrap {
-      position: relative;
-      width: 100%;
-      height: min(56vh, 520px);
-      background: #111;
-      border: 1px solid var(--line);
-      border-radius: 10px;
-      overflow: hidden;
-    }
-    .splat-wrap iframe {
-      display: block;
-      width: 100%;
-      height: 100%;
-      border: 0;
-      background: #111;
-    }
-    .splat-placeholder {
-      position: absolute;
-      inset: 0;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      gap: 12px;
-      color: #ddd;
-      background: #161616;
-      z-index: 2;
-      text-align: center;
-      padding: 20px;
-    }
-    .splat-placeholder p {
-      margin: 0;
-      font-size: 0.86rem;
-      color: #bdbdbd;
-      max-width: 36ch;
-    }
-    .splat-placeholder.hidden { display: none; }
-    .scene-picker {
-      margin-top: 18px;
-      padding-top: 16px;
-      border-top: 1px dashed #cfcfc8;
-    }
-    .scene-picker-hint {
-      margin: 0 0 14px;
-      text-align: center;
-      font-size: 0.86rem;
-      font-style: italic;
-      color: var(--muted);
-    }
-    .scene-carousel {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 12px;
-    }
-    .scene-nav {
-      flex: 0 0 auto;
-      width: 40px;
-      height: 40px;
-      border-radius: 50%;
-      border: 1px solid #d0d0d0;
-      background: #f7f7f5;
-      color: #666;
-      font-size: 1.2rem;
-      line-height: 1;
-      cursor: pointer;
-      display: grid;
-      place-items: center;
-      padding: 0;
-    }
-    .scene-nav:hover { border-color: #999; background: #fff; }
-    .scene-thumbs {
-      display: flex;
-      gap: 14px;
-      overflow-x: auto;
-      padding: 4px 2px 8px;
-      scroll-snap-type: x mandatory;
-      max-width: min(100%, 900px);
-    }
-    .scene-thumb {
-      flex: 0 0 auto;
-      width: 168px;
-      border: 2px solid transparent;
-      border-radius: 12px;
-      padding: 0;
-      background: transparent;
-      cursor: pointer;
-      overflow: hidden;
-      scroll-snap-align: center;
-      box-shadow: 0 1px 4px rgba(0,0,0,0.08);
-    }
-    .scene-thumb img {
-      display: block;
-      width: 100%;
-      aspect-ratio: 3 / 2;
-      object-fit: cover;
-      border-radius: 10px;
-    }
-    .scene-thumb.active {
-      border-color: var(--accent);
-      background: var(--accent);
-      color: #fff;
-      box-shadow: 0 0 0 2px rgba(11, 61, 92, 0.18);
-    }
-    .scene-thumb-caption {
-      margin-top: 6px;
-      font-size: 0.78rem;
-      color: var(--muted);
-      text-align: center;
-    }
-    .scene-thumb.active .scene-thumb-caption {
-      color: #fff;
-      font-weight: 650;
-    }
-    .gif-stage {
-      width: 100%;
-      background: #111;
-      border: 1px solid var(--line);
-      border-radius: 10px;
-      overflow: hidden;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      min-height: 220px;
-    }
-    .gif-stage video {
-      display: block;
-      width: 100%;
-      height: auto;
-      max-height: min(70vh, 720px);
-      object-fit: contain;
-      background: #111;
-    }
-    footer {
-      margin-top: 28px;
-      padding-top: 12px;
-      border-top: 1px solid var(--line);
-      font-size: 0.78rem;
-      color: var(--muted);
-    }
-    @media (max-width: 900px) {
-      .splat-row { grid-template-columns: 1fr; }
-      .splat-wrap { height: min(48vh, 420px); }
-      .scene-thumb { width: 140px; }
-    }
-    @media (max-width: 640px) {
-      .page-title { font-size: 1.25rem; }
-      .card-subtitle { font-size: 1.02rem; }
-      .toggle-group button { min-width: 96px; padding: 8px 8px; }
-    }
-  </style>
+  <link rel="preload" href="assets/fonts/manrope-variable.ttf" as="font" type="font/ttf" crossorigin />
+  <link rel="stylesheet" href="assets/css/site.css" />
 </head>
 <body>
+  <a class="skip-link" href="#abstract">Skip to the paper</a>
   <div class="wrap">
-    <h1 class="page-title">MCSplat: Multi-View Photometric and Geometric Consistent Feed-Forward Gaussian Splatting for Driving Scenes</h1>
+    <nav class="site-nav" aria-label="Main navigation">
+      <a class="wordmark" href="#top" aria-label="MCSplat home">MC<span>Splat</span></a>
+      <div class="nav-links">
+        <a href="#abstract">Abstract</a>
+        <a href="#method">Method</a>
+        <a href="#demos">Demos</a>
+        <a class="nav-github" href="https://github.com/yfwang0824/yfwang-MCSplat">GitHub ↗</a>
+      </div>
+    </nav>
+    <main id="top">
+      <header class="hero" aria-labelledby="paper-title">
+        <p class="eyebrow">Multi-view consistency · Driving-scene reconstruction</p>
+        <h1 class="page-title" id="paper-title">
+          <span class="project-name">MCSplat<span class="sr-only">: </span></span>
+          <span class="project-title"><span class="no-wrap">Multi-View</span> Photometric and Geometric Consistent <span class="no-wrap">Feed-Forward</span> Gaussian Splatting for Driving Scenes</span>
+        </h1>
+        <div class="authors" aria-label="Authors">
+          <div class="author-row">
+            <span class="author">Yifei Wang<sup>1,2,*</sup></span>
+            <span class="author">Wei Tian<sup>3,<span aria-label="corresponding author">✉</span></sup></span>
+            <span class="author">Wenhua Bao<sup>2</sup></span>
+            <span class="author">Jia Zhou<sup>3</sup></span>
+          </div>
+          <div class="author-row">
+            <span class="author">Hanshi Wang<sup>4</sup></span>
+            <span class="author">Fudong Ge<sup>4</sup></span>
+            <span class="author">Jianhua Wu<sup>3</sup></span>
+            <span class="author">Shuai Yuan<sup>5</sup></span>
+            <span class="author">Zhipeng Zhang<sup>5</sup></span>
+          </div>
+          <div class="author-row">
+            <span class="author">Xingliang Liu<sup>2,†</sup></span>
+            <span class="author">Xianming Zeng<sup>2,†</sup></span>
+            <span class="author">Jianyun Xu<sup>2,†</sup></span>
+            <span class="author">Bingzhao Gao<sup>1,3,<span aria-label="corresponding author">✉</span></sup></span>
+          </div>
+        </div>
+        <div class="affiliations" aria-label="Affiliations">
+          <p><sup>1</sup> Shanghai Research Institute for Intelligent Autonomous Systems, Tongji University</p>
+          <p><sup>2</sup> Zaofu Intelligent Technology Co., Ltd.</p>
+          <p><sup>3</sup> College of Automotive and Energy Engineering, Tongji University</p>
+          <p class="affiliation-row"><span><sup>4</sup> Institute of Automation, Chinese Academy of Sciences</span><span><sup>5</sup> SAI, Shanghai Jiao Tong University</span></p>
+        </div>
+        <div class="author-notes">
+          <p>* Work done during an internship at Zaofu Intelligent Technology Co., Ltd.</p>
+          <p class="role-note"><span>† Project leaders</span><span>✉ Corresponding authors</span></p>
+        </div>
+        <div class="hero-actions">
+          <a class="action-link primary" href="#demos">Explore demos <span aria-hidden="true">↓</span></a>
+          <a class="action-link" href="https://github.com/yfwang0824/yfwang-MCSplat">GitHub repository <span aria-hidden="true">↗</span></a>
+        </div>
+      </header>
+
+      <section class="abstract-section" id="abstract" aria-labelledby="abstract-title">
+        <div>
+          <p class="eyebrow">The research</p>
+          <h2 class="section-title" id="abstract-title">Abstract</h2>
+        </div>
+        <div class="abstract-copy">
+          <p>Driving-scene reconstruction via feed-forward Gaussian splatting from sparse multi-view images remains challenging due to two factors. First, cross-camera photometric inconsistency—caused by variations in exposure, ISP, and illumination—can be incorrectly absorbed into Gaussian geometry. Second, unreliable local geometric supervision arises from normal-based constraints near depth discontinuities.</p>
+          <p>To address these issues, we present <strong>MCSplat</strong>, a multi-view consistent feed-forward Gaussian splatting framework for driving scenes. MCSplat constructs a canonical appearance space from depth-guided multi-camera correspondences to decouple geometry learning from camera-specific appearance. A multi-scale Bilateral Grid Transformer restores raw camera appearance from canonical renderings, enabling photometric supervision without contaminating Gaussian geometry. To improve local geometric reliability, we estimate Fisher-information-based uncertainty from photometric sensitivity and use it to adaptively weight surface-oriented self-supervision. Experiments on the Waymo Dataset show that MCSplat achieves state-of-the-art performance on both the full validation set and an appearance-challenging subset with strong cross-camera photometric inconsistency, demonstrating improved reconstruction quality and more consistent novel-view geometry.</p>
+        </div>
+      </section>
+
+      <section class="method-section" id="method" aria-labelledby="method-title">
+        <div class="section-heading">
+          <div><p class="eyebrow">The pipeline</p><h2 class="section-title" id="method-title">Method overview</h2></div>
+          <a class="figure-link" href="assets/figures/pipeline.pdf" target="_blank" rel="noopener">View full-resolution PDF ↗</a>
+        </div>
+        <figure class="pipeline-figure">
+          <a class="pipeline-image" href="assets/figures/pipeline.pdf" target="_blank" rel="noopener" aria-label="Open the full-resolution MCSplat pipeline figure">
+            <img src="assets/figures/pipeline.png" width="3000" height="1847" loading="lazy" decoding="async" alt="MCSplat pipeline: (a) depth-guided canonical appearance construction, (b) multiscale 3D bilateral grid prediction and camera appearance recovery, and (c) Fisher-information-based uncertainty-aware geometric self-supervision." />
+          </a>
+          <figcaption><strong>MCSplat overview.</strong> (a) Depth-guided correspondences construct a canonical appearance space. (b) A multi-scale Bilateral Grid Transformer recovers camera-specific appearance. (c) Fisher-information-based uncertainty adaptively weights geometric self-supervision.</figcaption>
+        </figure>
+      </section>
+
+      <div class="demo-intro" id="demos">
+        <p class="eyebrow">Explore the results</p>
+        <h2 class="section-title">Interactive results</h2>
+        <p>Interactive appearance comparisons, 3D Gaussian reconstructions, and cross-lane novel views.</p>
+      </div>
 
     <section id="bgtSection">
-      <h2 class="card-subtitle">Bilateral Grid Transformer: appearance correction on / off</h2>
+      <div class="demo-heading"><span class="demo-number" aria-hidden="true">01</span><div><p class="eyebrow">Appearance consistency</p><h3 class="card-subtitle">Bilateral Grid Transformer</h3></div></div>
       <p class="card-lead">
         Drag the divider (or use the toggle) to compare the same reconstruction in
         <strong>canonical appearance space</strong> (BGT off) versus after
@@ -498,7 +128,7 @@
       <div class="controls">
         <button id="playBtn" type="button">Pause</button>
         <div class="toggle-group" role="group" aria-label="Bilateral grid mode">
-          <button type="button" class="on active" id="modeOn">BGT ON</button>
+          <button type="button" class="on" id="modeOn">BGT ON</button>
           <button type="button" class="off" id="modeOff">BGT OFF</button>
         </div>
         <div class="slider-wrap">
@@ -523,7 +153,7 @@
     </section>
 
     <section id="splatSection">
-      <h2 class="card-subtitle">Interactive Gaussian comparison · UniSplat vs MCSplat</h2>
+      <div class="demo-heading"><span class="demo-number" aria-hidden="true">02</span><div><p class="eyebrow">Gaussian reconstruction</p><h3 class="card-subtitle">UniSplat vs MCSplat in 3D</h3></div></div>
       <div class="label-row">
         <span></span>
         <span id="splatSceneLabel">Scene 070 · frame 000000</span>
@@ -576,7 +206,7 @@
     </section>
 
     <section id="gifSection">
-      <h2 class="card-subtitle">Cross lane NVS comparison · UniSplat vs MCSplat</h2>
+      <div class="demo-heading"><span class="demo-number" aria-hidden="true">03</span><div><p class="eyebrow">Novel-view synthesis</p><h3 class="card-subtitle">Cross-lane novel-view synthesis</h3></div></div>
       <div class="label-row">
         <span></span>
         <span id="gifSceneLabel">Scene 018</span>
@@ -588,26 +218,41 @@
           muted
           loop
           playsinline
-          preload="auto"
+          preload="metadata"
+          poster="assets/thumbs/gif_scene_018.jpg"
           controls
         ></video>
       </div>
       <div class="scene-picker">
-        <p class="scene-picker-hint">Select a preview below to switch the comparison GIF above.</p>
+        <p class="scene-picker-hint">Select a preview below to switch the comparison video above.</p>
         <div class="scene-carousel">
-          <button type="button" class="scene-nav" id="gifPrev" aria-label="Previous GIF scene">‹</button>
-          <div class="scene-thumbs" id="gifThumbs" role="listbox" aria-label="GIF scene previews"></div>
-          <button type="button" class="scene-nav" id="gifNext" aria-label="Next GIF scene">›</button>
+          <button type="button" class="scene-nav" id="gifPrev" aria-label="Previous video scene">‹</button>
+          <div class="scene-thumbs" id="gifThumbs" role="listbox" aria-label="Video scene previews"></div>
+          <button type="button" class="scene-nav" id="gifNext" aria-label="Next video scene">›</button>
         </div>
       </div>
     </section>
 
+    </main>
     <footer>
-      MCSplat interactive demo · <a href="https://github.com/yfwang0824/yfwang-MCSplat">GitHub repository</a>
+      <span>MCSplat · Multi-view consistent driving-scene reconstruction</span>
+      <a href="https://github.com/yfwang0824/yfwang-MCSplat">View project on GitHub ↗</a>
     </footer>
   </div>
 
   <script>
+    // Let the paper introduction load before fetching the large demo assets.
+    function startWhenVisible(element, start) {
+      if (!("IntersectionObserver" in window)) { start(); return; }
+      const observer = new IntersectionObserver((entries) => {
+        if (entries.some((entry) => entry.isIntersecting)) {
+          observer.disconnect();
+          start();
+        }
+      }, { rootMargin: "240px" });
+      observer.observe(element);
+    }
+
     const FPS = 10;
     const PAD = 4;
     const BGT_SCENES = [
@@ -711,7 +356,7 @@
           status.textContent = "Ready · drag the white divider or toggle BGT ON / OFF.";
         } else if (loaded % 30 === 0 || loaded < 12) {
           status.textContent = started
-            ? `Playing · buffered ${Math.round((100 * loaded) / total)}%`
+            ? `Ready · buffered ${Math.round((100 * loaded) / total)}%`
             : `Loading frames… ${Math.round((100 * loaded) / total)}%`;
         }
       };
@@ -827,7 +472,7 @@
       });
     }
 
-    function selectBgtScene(index) {
+    function selectBgtScene(index, scroll = true) {
       if (index < 0 || index >= BGT_SCENES.length) return;
       bgtIndex = index;
       const scene = BGT_SCENES[bgtIndex];
@@ -843,7 +488,7 @@
       status.textContent = `Loading ${scene.label}…`;
       renderBgtThumbs();
       const active = bgtThumbs.querySelector(".scene-thumb.active");
-      if (active) active.scrollIntoView({ behavior: "smooth", inline: "center", block: "nearest" });
+      if (active && scroll) active.scrollIntoView({ behavior: "smooth", inline: "center", block: "nearest" });
       const token = ++preloadToken;
       preload(token);
       syncCompareWidth();
@@ -904,7 +549,7 @@
     });
 
     renderBgtThumbs();
-    selectBgtScene(0);
+    startWhenVisible(document.getElementById("bgtSection"), () => selectBgtScene(0, false));
 
     const SCENES = [
       {
@@ -956,7 +601,7 @@
       });
     }
 
-    function selectScene(index) {
+    function selectScene(index, scroll = true) {
       if (index < 0 || index >= SCENES.length) return;
       sceneIndex = index;
       const scene = SCENES[sceneIndex];
@@ -964,7 +609,7 @@
       renderThumbs();
       loadSceneViewers(scene);
       const active = sceneThumbs.querySelector(".scene-thumb.active");
-      if (active) active.scrollIntoView({ behavior: "smooth", inline: "center", block: "nearest" });
+      if (active && scroll) active.scrollIntoView({ behavior: "smooth", inline: "center", block: "nearest" });
     }
 
     function loadSceneViewers(scene) {
@@ -1006,7 +651,7 @@
     });
 
     renderThumbs();
-    selectScene(0);
+    startWhenVisible(document.getElementById("splatSection"), () => selectScene(0, false));
 
     const GIF_SCENES = [
       {
@@ -1045,7 +690,7 @@
       });
     }
 
-    function selectGifScene(index) {
+    function selectGifScene(index, scroll = true) {
       if (index < 0 || index >= GIF_SCENES.length) return;
       gifIndex = index;
       const scene = GIF_SCENES[gifIndex];
@@ -1061,7 +706,7 @@
       else gifVideo.addEventListener("loadeddata", play, { once: true });
       renderGifThumbs();
       const active = gifThumbs.querySelector(".scene-thumb.active");
-      if (active) active.scrollIntoView({ behavior: "smooth", inline: "center", block: "nearest" });
+      if (active && scroll) active.scrollIntoView({ behavior: "smooth", inline: "center", block: "nearest" });
     }
 
     gifPrev.addEventListener("click", () => {
@@ -1072,7 +717,7 @@
     });
 
     renderGifThumbs();
-    selectGifScene(0);
+    startWhenVisible(document.getElementById("gifSection"), () => selectGifScene(0, false));
   </script>
 </body>
 </html>

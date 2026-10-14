@@ -4,6 +4,12 @@
 
 [View the live demo](https://yfwang0824.github.io/yfwang-MCSplat/)
 
+## Paper overview
+
+The page presents the authors and affiliations, the abstract, and the method pipeline before the interactive demos. The original pipeline PDF is available alongside the web image under `assets/figures/`.
+
+The visual design uses a light blue background, self-hosted Manrope typography, and responsive layouts. Manrope is distributed under the included SIL Open Font License in `assets/fonts/`. Demo assets begin loading as their sections approach the viewport.
+
 ## Interactive comparisons
 
 - **Bilateral Grid Transformer:** synchronized ground-truth, BGT-on, and BGT-off image sequences for scenes 040, 050, and 199. Drag the divider, toggle correction, or seek through frames.
