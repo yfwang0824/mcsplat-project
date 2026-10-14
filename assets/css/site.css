@@ -54,7 +54,6 @@ button, a { -webkit-tap-highlight-color: transparent; }
 .nav-links { display: flex; align-items: center; gap: 28px; font-size: 13px; font-weight: 650; }
 .nav-links a { text-decoration: none; color: var(--muted); }
 .nav-links a:hover { color: var(--accent); }
-.nav-github { border-left: 1px solid #cbd7e8; padding-left: 28px; }
 .hero { text-align: center; padding: 62px 0 52px; }
 .eyebrow { margin: 0 0 14px; color: #496899; font-size: 11px; font-weight: 800; letter-spacing: .14em; text-transform: uppercase; }
 .page-title { margin: 0 auto 29px; font-weight: 600; max-width: 1030px; }
@@ -82,6 +81,9 @@ sup { color: #5c75a0; font-size: .69em; line-height: 0; vertical-align: super; m
 .action-link.primary { background: var(--accent); border-color: var(--accent); color: white; box-shadow: 0 5px 15px #315fe51a; }
 .action-link:hover { background: #e4ecff; color: #173c97; }
 .action-link.primary:hover { background: #244dc9; color: white; }
+.coming-soon { color: var(--muted); cursor: default; }
+.coming-soon .github-icon { flex: 0 0 auto; }
+.coming-soon:hover { color: var(--muted); background: #ffffff80; }
 section {
   margin-top: 26px; padding: 32px; background: var(--panel);
   border: 1px solid rgba(173, 193, 222, .5); border-radius: 24px;
@@ -504,7 +506,6 @@ input[type="range"] { accent-color: var(--accent); }
   .site-nav { min-height: 72px; gap: 16px; }
   .wordmark { font-size: 21px; }
   .nav-links { gap: 15px; font-size: 11px; }
-  .nav-github { display: none; }
   .hero { padding: 40px 0 32px; }
   .project-name { margin-bottom: 15px; font-size: 64px; }
   .project-title { font-size: 25px; line-height: 1.35; }
@@ -541,6 +542,51 @@ input[type="range"] { accent-color: var(--accent); }
   .scene-thumbs { gap: 10px; }
   .scene-thumb { width: 124px; }
   .splat-tip { font-size: 11px; }
+}
+/* Keep each demo's scene choices beside its visualization. */
+.demo-section { padding: 24px; }
+.demo-section .demo-heading { margin-bottom: 18px; }
+.demo-section .card-lead { margin-bottom: 18px; font-size: 13px; }
+.demo-layout { display: grid; grid-template-columns: 140px minmax(0, 1fr); gap: 24px; align-items: start; }
+.demo-visual { min-width: 0; }
+.demo-layout .scene-picker {
+  position: sticky; top: 20px; align-self: start;
+  margin: 0; padding: 0 18px 0 0;
+  border-top: 0; border-right: 1px solid var(--line);
+}
+.demo-layout .scene-picker-hint { margin: 0 0 10px; text-align: left; font-size: 11px; font-weight: 800; color: #496899; }
+.demo-layout .scene-thumbs { min-width: 0; max-width: none; }
+.demo-layout .scene-thumb img { aspect-ratio: 16 / 10; }
+.demo-layout .splat-wrap { height: clamp(220px, calc(100svh - 300px), 430px); }
+.demo-layout .splat-tip { margin-top: 12px; padding: 10px 12px; }
+.demo-layout .splat-load-status { margin-bottom: 0; }
+.demo-layout .gif-stage { height: clamp(240px, calc(100svh - 225px), 540px); min-height: 0; }
+.demo-layout .gif-stage video { width: 100%; height: 100%; max-height: none; object-fit: contain; }
+@media (min-width: 901px) {
+  .demo-layout .scene-carousel { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+  .demo-layout .scene-thumbs { grid-column: 1 / -1; grid-row: 1; flex-direction: column; gap: 10px; padding: 3px 2px 6px; overflow: visible; }
+  .demo-layout .scene-thumb { width: 100%; padding-bottom: 6px; border-radius: 10px; }
+  .demo-layout .scene-thumb-caption { margin-top: 4px; }
+  .demo-layout .scene-nav { width: 100%; height: 30px; border-radius: 8px; }
+}
+@media (max-width: 900px) {
+  .demo-layout { grid-template-columns: minmax(0, 1fr); gap: 16px; }
+  .demo-layout .scene-picker {
+    top: 8px; z-index: 5; padding: 8px;
+    border: 1px solid var(--line); border-radius: 12px;
+    background: rgba(248, 251, 255, .97);
+  }
+  .demo-layout .scene-picker-hint { margin-bottom: 5px; }
+  .demo-layout .scene-thumbs { padding-bottom: 3px; gap: 8px; }
+  .demo-layout .scene-thumb { width: 104px; padding-bottom: 5px; }
+  .demo-layout .scene-thumb-caption { margin-top: 3px; }
+  .demo-layout .splat-wrap { height: clamp(190px, 30svh, 280px); }
+  .demo-layout .gif-stage { height: auto; }
+  .demo-layout .gif-stage video { height: auto; max-height: 58svh; }
+}
+@media (max-width: 640px) {
+  .demo-section { padding: 20px 16px; }
+  .demo-section .card-lead { font-size: 12px; }
 }
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }

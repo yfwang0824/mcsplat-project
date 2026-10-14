@@ -17,7 +17,6 @@
         <a href="#abstract">Abstract</a>
         <a href="#method">Method</a>
         <a href="#demos">Demos</a>
-        <a class="nav-github" href="https://github.com/yfwang0824/yfwang-MCSplat">GitHub ↗</a>
       </div>
     </nav>
     <main id="top">
@@ -59,7 +58,10 @@
         </div>
         <div class="hero-actions">
           <a class="action-link primary" href="#demos">Explore demos <span aria-hidden="true">↓</span></a>
-          <a class="action-link" href="https://github.com/yfwang0824/yfwang-MCSplat">GitHub repository <span aria-hidden="true">↗</span></a>
+          <span class="action-link coming-soon">
+            <svg class="github-icon" viewBox="0 0 24 24" width="20" height="20" fill="currentColor" aria-hidden="true" focusable="false"><path d="M12 .75a11.25 11.25 0 0 0-3.558 21.923c.563.104.768-.244.768-.542 0-.267-.01-.975-.015-1.913-3.13.68-3.79-1.508-3.79-1.508-.512-1.3-1.25-1.646-1.25-1.646-1.022-.7.078-.686.078-.686 1.13.08 1.725 1.16 1.725 1.16 1.005 1.722 2.637 1.225 3.279.937.102-.728.393-1.225.715-1.507-2.499-.284-5.126-1.25-5.126-5.565 0-1.229.44-2.233 1.16-3.02-.116-.285-.503-1.43.11-2.98 0 0 .945-.303 3.094 1.154A10.787 10.787 0 0 1 12 6.178c.956.005 1.918.13 2.817.379 2.147-1.457 3.09-1.154 3.09-1.154.615 1.55.228 2.695.113 2.98.722.787 1.158 1.791 1.158 3.02 0 4.326-2.631 5.278-5.139 5.557.404.35.764 1.042.764 2.1 0 1.517-.014 2.742-.014 3.114 0 .3.202.65.774.54A11.252 11.252 0 0 0 12 .75Z"/></svg>
+            Coming soon
+          </span>
         </div>
       </header>
 
@@ -90,136 +92,146 @@
         <p>Interactive appearance comparisons, 3D Gaussian reconstructions, and cross-lane novel views.</p>
       </div>
 
-    <section id="bgtSection">
+    <section id="bgtSection" class="demo-section">
       <div class="demo-heading"><span class="demo-number" aria-hidden="true">01</span><div><p class="eyebrow">Appearance consistency</p><h3 class="card-subtitle">Bilateral Grid Transformer</h3></div></div>
       <p class="card-lead">
         Drag the divider (or use the toggle) to compare the same reconstruction in
         <strong>canonical appearance space</strong> (BGT off) versus after
         <strong>bilateral-grid correction</strong> (BGT on). Ground truth is shown above for reference.
       </p>
-      <div class="label-row">
-        <span><strong>Ground truth</strong></span>
-        <span id="bgtSceneLabel">Scene 040</span>
-      </div>
-      <div class="stage" id="gtStage">
-        <img id="gtImg" alt="Ground truth" />
-      </div>
+      <div class="demo-layout">
+        <aside class="scene-picker" aria-label="Scene selection">
+          <p class="scene-picker-hint">Scenes</p>
+          <div class="scene-carousel">
+            <button type="button" class="scene-nav" id="bgtPrev" aria-label="Previous BGT scene">‹</button>
+            <div class="scene-thumbs" id="bgtThumbs" role="listbox" aria-label="BGT scene previews"></div>
+            <button type="button" class="scene-nav" id="bgtNext" aria-label="Next BGT scene">›</button>
+          </div>
+        </aside>
+        <div class="demo-visual">
+          <div class="label-row">
+            <span><strong>Ground truth</strong></span>
+            <span id="bgtSceneLabel">Scene 040</span>
+          </div>
+          <div class="stage" id="gtStage">
+            <img id="gtImg" alt="Ground truth" />
+          </div>
 
-      <div class="label-row" style="margin-top:14px;">
-        <span><strong>Interactive comparison</strong> · left = BGT on · right = BGT off</span>
-        <span id="frameLabel">frame 0 / 197</span>
-      </div>
-      <div class="compare" id="compare" aria-label="Wipe comparison between BGT on and off">
-        <div class="layer off-layer">
-          <img id="offImg" alt="Bilateral grid off (canonical)" />
-        </div>
-        <div class="layer on-layer" id="onLayer">
-          <img id="onImg" alt="Bilateral grid on" />
-        </div>
-        <div class="handle" id="handle"></div>
-        <div class="chip left on">BGT ON</div>
-        <div class="chip right off">BGT OFF</div>
-      </div>
+          <div class="label-row" style="margin-top:14px;">
+            <span><strong>Interactive comparison</strong> · left = BGT on · right = BGT off</span>
+            <span id="frameLabel">frame 0 / 197</span>
+          </div>
+          <div class="compare" id="compare" aria-label="Wipe comparison between BGT on and off">
+            <div class="layer off-layer">
+              <img id="offImg" alt="Bilateral grid off (canonical)" />
+            </div>
+            <div class="layer on-layer" id="onLayer">
+              <img id="onImg" alt="Bilateral grid on" />
+            </div>
+            <div class="handle" id="handle"></div>
+            <div class="chip left on">BGT ON</div>
+            <div class="chip right off">BGT OFF</div>
+          </div>
 
-      <div class="controls">
-        <button id="playBtn" type="button">Pause</button>
-        <div class="toggle-group" role="group" aria-label="Bilateral grid mode">
-          <button type="button" class="on" id="modeOn">BGT ON</button>
-          <button type="button" class="off" id="modeOff">BGT OFF</button>
-        </div>
-        <div class="slider-wrap">
-          <label for="wipe">Wipe</label>
-          <input id="wipe" type="range" min="0" max="100" value="50" />
-        </div>
-        <div class="slider-wrap">
-          <label for="seek">Seek</label>
-          <input id="seek" type="range" min="0" max="197" value="0" />
-        </div>
-      </div>
-      <div class="status" id="status">Loading frames…</div>
-
-      <div class="scene-picker">
-        <p class="scene-picker-hint">Select a front-camera preview below to switch the BGT comparison above.</p>
-        <div class="scene-carousel">
-          <button type="button" class="scene-nav" id="bgtPrev" aria-label="Previous BGT scene">‹</button>
-          <div class="scene-thumbs" id="bgtThumbs" role="listbox" aria-label="BGT scene previews"></div>
-          <button type="button" class="scene-nav" id="bgtNext" aria-label="Next BGT scene">›</button>
+          <div class="controls">
+            <button id="playBtn" type="button">Pause</button>
+            <div class="toggle-group" role="group" aria-label="Bilateral grid mode">
+              <button type="button" class="on" id="modeOn">BGT ON</button>
+              <button type="button" class="off" id="modeOff">BGT OFF</button>
+            </div>
+            <div class="slider-wrap">
+              <label for="wipe">Wipe</label>
+              <input id="wipe" type="range" min="0" max="100" value="50" />
+            </div>
+            <div class="slider-wrap">
+              <label for="seek">Seek</label>
+              <input id="seek" type="range" min="0" max="197" value="0" />
+            </div>
+          </div>
+          <div class="status" id="status">Loading frames…</div>
         </div>
       </div>
     </section>
 
-    <section id="splatSection">
+    <section id="splatSection" class="demo-section">
       <div class="demo-heading"><span class="demo-number" aria-hidden="true">02</span><div><p class="eyebrow">Gaussian reconstruction</p><h3 class="card-subtitle">UniSplat vs MCSplat in 3D</h3></div></div>
-      <div class="splat-main">
-        <div class="splat-row">
-          <div class="splat-col">
-            <div class="splat-col-label"><strong>UniSplat</strong></div>
-            <div class="splat-wrap">
-              <div class="splat-placeholder" id="splatPhUni">
-                <p>Loading SuperSplat…</p>
+      <div class="demo-layout">
+        <aside class="scene-picker" aria-label="Scene selection">
+          <p class="scene-picker-hint">Scenes</p>
+          <div class="scene-carousel">
+            <button type="button" class="scene-nav" id="scenePrev" aria-label="Previous scene">‹</button>
+            <div class="scene-thumbs" id="sceneThumbs" role="listbox" aria-label="Scene previews"></div>
+            <button type="button" class="scene-nav" id="sceneNext" aria-label="Next scene">›</button>
+          </div>
+        </aside>
+        <div class="demo-visual">
+          <div class="splat-main">
+            <div class="splat-row">
+              <div class="splat-col">
+                <div class="splat-col-label"><strong>UniSplat</strong></div>
+                <div class="splat-wrap">
+                  <div class="splat-placeholder" id="splatPhUni">
+                    <p>Loading SuperSplat…</p>
+                  </div>
+                  <iframe
+                    id="splatFrameUni"
+                    title="UniSplat SuperSplat viewer"
+                    allow="fullscreen; xr-spatial-tracking"
+                  ></iframe>
+                </div>
               </div>
-              <iframe
-                id="splatFrameUni"
-                title="UniSplat SuperSplat viewer"
-                allow="fullscreen; xr-spatial-tracking"
-              ></iframe>
+              <div class="splat-col">
+                <div class="splat-col-label"><strong>MCSplat</strong></div>
+                <div class="splat-wrap">
+                  <div class="splat-placeholder" id="splatPhMc">
+                    <p>Loading SuperSplat…</p>
+                  </div>
+                  <iframe
+                    id="splatFrameMc"
+                    title="MCSplat SuperSplat viewer"
+                    allow="fullscreen; xr-spatial-tracking"
+                  ></iframe>
+                </div>
+              </div>
             </div>
           </div>
-          <div class="splat-col">
-            <div class="splat-col-label"><strong>MCSplat</strong></div>
-            <div class="splat-wrap">
-              <div class="splat-placeholder" id="splatPhMc">
-                <p>Loading SuperSplat…</p>
-              </div>
-              <iframe
-                id="splatFrameMc"
-                title="MCSplat SuperSplat viewer"
-                allow="fullscreen; xr-spatial-tracking"
-              ></iframe>
-            </div>
-          </div>
-        </div>
-      </div>
 
-      <p class="splat-tip">
-        <strong>Tip: hover a viewer and press <kbd>F</kbd> to frame · drag to orbit · scroll to zoom · right-drag to pan</strong>
-      </p>
-      <span class="splat-load-status" id="splatLoadStatus">Loading Gaussian scenes…</span>
-
-      <div class="scene-picker">
-        <p class="scene-picker-hint">Select a scene preview below to switch the Gaussian comparison above.</p>
-        <div class="scene-carousel">
-          <button type="button" class="scene-nav" id="scenePrev" aria-label="Previous scene">‹</button>
-          <div class="scene-thumbs" id="sceneThumbs" role="listbox" aria-label="Scene previews"></div>
-          <button type="button" class="scene-nav" id="sceneNext" aria-label="Next scene">›</button>
+          <p class="splat-tip">
+            <strong>Tip: hover a viewer and press <kbd>F</kbd> to frame · drag to orbit · scroll to zoom · right-drag to pan</strong>
+          </p>
+          <span class="splat-load-status" id="splatLoadStatus">Loading Gaussian scenes…</span>
         </div>
       </div>
     </section>
 
-    <section id="gifSection">
+    <section id="gifSection" class="demo-section">
       <div class="demo-heading"><span class="demo-number" aria-hidden="true">03</span><div><p class="eyebrow">Novel-view synthesis</p><h3 class="card-subtitle">Cross-lane novel-view synthesis</h3></div></div>
-      <div class="label-row">
-        <span></span>
-        <span id="gifSceneLabel">Scene 018</span>
-      </div>
-      <div class="gif-stage">
-        <video
-          id="gifVideo"
-          autoplay
-          muted
-          loop
-          playsinline
-          preload="metadata"
-          poster="assets/thumbs/gif_scene_018.jpg"
-          controls
-        ></video>
-      </div>
-      <div class="scene-picker">
-        <p class="scene-picker-hint">Select a preview below to switch the comparison video above.</p>
-        <div class="scene-carousel">
-          <button type="button" class="scene-nav" id="gifPrev" aria-label="Previous video scene">‹</button>
-          <div class="scene-thumbs" id="gifThumbs" role="listbox" aria-label="Video scene previews"></div>
-          <button type="button" class="scene-nav" id="gifNext" aria-label="Next video scene">›</button>
+      <div class="demo-layout">
+        <aside class="scene-picker" aria-label="Scene selection">
+          <p class="scene-picker-hint">Scenes</p>
+          <div class="scene-carousel">
+            <button type="button" class="scene-nav" id="gifPrev" aria-label="Previous video scene">‹</button>
+            <div class="scene-thumbs" id="gifThumbs" role="listbox" aria-label="Video scene previews"></div>
+            <button type="button" class="scene-nav" id="gifNext" aria-label="Next video scene">›</button>
+          </div>
+        </aside>
+        <div class="demo-visual">
+          <div class="label-row">
+            <span></span>
+            <span id="gifSceneLabel">Scene 018</span>
+          </div>
+          <div class="gif-stage">
+            <video
+              id="gifVideo"
+              autoplay
+              muted
+              loop
+              playsinline
+              preload="metadata"
+              poster="assets/thumbs/gif_scene_018.jpg"
+              controls
+            ></video>
+          </div>
         </div>
       </div>
     </section>
@@ -238,6 +250,17 @@
         }
       }, { rootMargin: "240px" });
       observer.observe(element);
+    }
+
+    // Scroll only the scene strip so selecting a card never moves the page.
+    function keepSceneCardVisible(card) {
+      const strip = card.parentElement;
+      if (strip.scrollWidth <= strip.clientWidth) return;
+      const offset = card.getBoundingClientRect().left - strip.getBoundingClientRect().left;
+      strip.scrollTo({
+        left: strip.scrollLeft + offset - (strip.clientWidth - card.clientWidth) / 2,
+        behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "instant" : "smooth",
+      });
     }
 
     const FPS = 10;
@@ -475,7 +498,7 @@
       status.textContent = `Loading ${scene.label}…`;
       renderBgtThumbs();
       const active = bgtThumbs.querySelector(".scene-thumb.active");
-      if (active && scroll) active.scrollIntoView({ behavior: "smooth", inline: "center", block: "nearest" });
+      if (active && scroll) keepSceneCardVisible(active);
       const token = ++preloadToken;
       preload(token);
       syncCompareWidth();
@@ -594,7 +617,7 @@
       renderThumbs();
       loadSceneViewers(scene);
       const active = sceneThumbs.querySelector(".scene-thumb.active");
-      if (active && scroll) active.scrollIntoView({ behavior: "smooth", inline: "center", block: "nearest" });
+      if (active && scroll) keepSceneCardVisible(active);
     }
 
     function loadSceneViewers(scene) {
@@ -691,7 +714,7 @@
       else gifVideo.addEventListener("loadeddata", play, { once: true });
       renderGifThumbs();
       const active = gifThumbs.querySelector(".scene-thumb.active");
-      if (active && scroll) active.scrollIntoView({ behavior: "smooth", inline: "center", block: "nearest" });
+      if (active && scroll) keepSceneCardVisible(active);
     }
 
     gifPrev.addEventListener("click", () => {
