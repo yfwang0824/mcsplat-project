@@ -54,7 +54,7 @@ button, a { -webkit-tap-highlight-color: transparent; }
 .nav-links { display: flex; align-items: center; gap: 28px; font-size: 13px; font-weight: 650; }
 .nav-links a { text-decoration: none; color: var(--muted); }
 .nav-links a:hover { color: var(--accent); }
-.hero { text-align: center; padding: 62px 0 52px; }
+.hero { text-align: center; padding: 26px 0 40px; }
 .eyebrow { margin: 0 0 14px; color: #496899; font-size: 11px; font-weight: 800; letter-spacing: .14em; text-transform: uppercase; }
 .page-title { margin: 0 auto 29px; font-weight: 600; max-width: 1030px; }
 .project-name {
@@ -72,7 +72,7 @@ sup { color: #5c75a0; font-size: .69em; line-height: 0; vertical-align: super; m
 .author-notes { margin-top: 15px; color: #687995; font-size: 11.5px; line-height: 1.85; }
 .author-notes p { margin: 0; }
 .author-notes .role-note { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px 22px; }
-.hero-actions { display: flex; flex-wrap: wrap; justify-content: center; gap: 12px; margin-top: 27px; }
+.hero-actions { display: flex; flex-wrap: wrap; justify-content: center; gap: 12px; margin-top: 18px; }
 .action-link {
   display: inline-flex; align-items: center; justify-content: center; gap: 14px;
   padding: 11px 20px; border: 1px solid #c4d3ec; border-radius: 12px;
@@ -497,7 +497,7 @@ input[type="range"] { accent-color: var(--accent); }
   .abstract-section { grid-template-columns: 1fr; gap: 20px; padding: 28px; }
   .splat-row { grid-template-columns: 1fr; }
   .splat-wrap { height: min(54vh, 460px); }
-  .hero { padding-top: 46px; }
+  .hero { padding-top: 26px; }
   .author-row { gap: 6px 18px; }
   .scene-thumb { width: 140px; }
 }
@@ -506,7 +506,7 @@ input[type="range"] { accent-color: var(--accent); }
   .site-nav { min-height: 72px; gap: 16px; }
   .wordmark { font-size: 21px; }
   .nav-links { gap: 15px; font-size: 11px; }
-  .hero { padding: 40px 0 32px; }
+  .hero { padding: 24px 0 32px; }
   .project-name { margin-bottom: 15px; font-size: 64px; }
   .project-title { font-size: 25px; line-height: 1.35; }
   .page-title { margin-bottom: 25px; }

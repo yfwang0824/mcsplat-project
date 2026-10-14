@@ -590,7 +590,7 @@
     let loadToken = 0;
 
     function supersplatUrl(ply, sceneId) {
-      const settings = encodeURIComponent(`./settings-${sceneId}.json`);
+      const settings = encodeURIComponent(`./settings-${sceneId}.json?v=2`);
       return `supersplat/index.html?content=${encodeURIComponent(ply)}&settings=${settings}&webgl&noanim`;
     }
 
