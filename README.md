@@ -12,7 +12,7 @@ The visual design uses a light blue background, self-hosted Manrope typography, 
 
 ## Interactive comparisons
 
-- **Bilateral Grid Transformer:** synchronized ground-truth, BGT-on, and BGT-off image sequences for scenes 040, 050, and 199. Drag the divider, toggle correction, or seek through frames.
+- **Bilateral Grid Transformer:** synchronized ground-truth, BGT-on, and BGT-off image sequences for scenes 040, 050, and 199. Drag the divider or toggle correction.
 - **Gaussian reconstruction:** side-by-side UniSplat and MCSplat viewers for scenes 070 and 040, with matched close-up starting cameras and animation initially paused. Drag to orbit, scroll to zoom, right-drag to pan, and press **F** inside a viewer to frame the scene.
 - **Cross-lane novel-view synthesis:** comparison videos for scenes 018 and 027.
 

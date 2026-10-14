@@ -6,7 +6,7 @@
   <meta name="description" content="Interactive comparisons for MCSplat: Multi-View Photometric and Geometric Consistent Feed-Forward Gaussian Splatting for Driving Scenes." />
   <title>MCSplat: Multi-View Photometric and Geometric Consistent Feed-Forward Gaussian Splatting for Driving Scenes</title>
   <link rel="preload" href="assets/fonts/manrope-variable.ttf" as="font" type="font/ttf" crossorigin />
-  <link rel="stylesheet" href="assets/css/site.css?v=20261014-compact-hero" />
+  <link rel="stylesheet" href="assets/css/site.css?v=20261014-venue" />
 </head>
 <body>
   <a class="skip-link" href="#abstract">Skip to the paper</a>
@@ -24,6 +24,7 @@
         <h1 class="page-title" id="paper-title">
           <span class="project-name">MCSplat<span class="sr-only">: </span></span>
           <span class="project-title"><span class="no-wrap">Multi-View</span> Photometric and Geometric Consistent <span class="no-wrap">Feed-Forward</span> Gaussian Splatting for Driving Scenes</span>
+          <span class="publication-venue">NeurIPS2026</span>
         </h1>
         <div class="authors" aria-label="Authors">
           <div class="author-row">
@@ -138,14 +139,6 @@
             <div class="toggle-group" role="group" aria-label="Bilateral grid mode">
               <button type="button" class="on" id="modeOn">BGT ON</button>
               <button type="button" class="off" id="modeOff">BGT OFF</button>
-            </div>
-            <div class="slider-wrap">
-              <label for="wipe">Wipe</label>
-              <input id="wipe" type="range" min="0" max="100" value="50" />
-            </div>
-            <div class="slider-wrap">
-              <label for="seek">Seek</label>
-              <input id="seek" type="range" min="0" max="197" value="0" />
             </div>
           </div>
           <div class="status" id="status">Loading frames…</div>
@@ -292,8 +285,6 @@
     const onLayer = document.getElementById("onLayer");
     const handle = document.getElementById("handle");
     const compare = document.getElementById("compare");
-    const wipe = document.getElementById("wipe");
-    const seek = document.getElementById("seek");
     const playBtn = document.getElementById("playBtn");
     const modeOn = document.getElementById("modeOn");
     const modeOff = document.getElementById("modeOff");
@@ -410,7 +401,6 @@
       gtImg.src = cache.gt[frame].src;
       onImg.src = cache.on[frame].src;
       offImg.src = cache.off[frame].src;
-      seek.value = String(frame);
       frameLabel.textContent = `frame ${frame} / ${N - 1}`;
       applyWipe();
     }
@@ -419,19 +409,16 @@
       if (fullMode === "on") {
         onLayer.style.width = "100%";
         handle.style.left = "100%";
-        wipe.value = "100";
         return;
       }
       if (fullMode === "off") {
         onLayer.style.width = "0%";
         handle.style.left = "0%";
-        wipe.value = "0";
         return;
       }
       const pct = Math.max(0, Math.min(100, wipeFrac * 100));
       onLayer.style.width = pct + "%";
       handle.style.left = pct + "%";
-      wipe.value = String(Math.round(pct));
     }
 
     function setMode(mode) {
@@ -491,8 +478,6 @@
       frame = 0;
       lastTs = 0;
       cache = { gt: new Array(N), on: new Array(N), off: new Array(N) };
-      seek.max = String(N - 1);
-      seek.value = "0";
       bgtSceneLabel.textContent = scene.label;
       frameLabel.textContent = `frame 0 / ${N - 1}`;
       status.textContent = `Loading ${scene.label}…`;
@@ -511,18 +496,6 @@
     });
     modeOn.addEventListener("click", () => setMode("on"));
     modeOff.addEventListener("click", () => setMode("off"));
-    wipe.addEventListener("input", () => {
-      fullMode = null;
-      modeOn.classList.remove("active");
-      modeOff.classList.remove("active");
-      wipeFrac = Number(wipe.value) / 100;
-      applyWipe();
-    });
-    seek.addEventListener("input", () => {
-      playing = false;
-      playBtn.textContent = "Play";
-      showFrame(Number(seek.value));
-    });
 
     function pointerFrac(ev) {
       const rect = compare.getBoundingClientRect();

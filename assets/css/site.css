@@ -62,6 +62,7 @@ button, a { -webkit-tap-highlight-color: transparent; }
   font-weight: 800; letter-spacing: -.075em; line-height: 1.15; margin: 0 0 18px;
 }
 .project-title { display: block; font-size: clamp(25px, 3vw, 37px); line-height: 1.32; letter-spacing: -.045em; }
+.publication-venue { display: block; margin-top: 8px; color: var(--accent); font-size: 17px; font-weight: 700; line-height: 1.4; letter-spacing: .01em; }
 .authors { max-width: 1050px; margin: 0 auto 20px; }
 .author-row { display: flex; flex-wrap: wrap; justify-content: center; gap: 7px 24px; margin-top: 6px; }
 .author { white-space: nowrap; font-size: 15px; font-weight: 650; }
