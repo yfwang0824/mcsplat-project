@@ -589,9 +589,9 @@
     let sceneIndex = 0;
     let loadToken = 0;
 
-    function supersplatUrl(ply) {
-      const settings = encodeURIComponent("./settings.json");
-      return `supersplat/index.html?content=${encodeURIComponent(ply)}&settings=${settings}&webgl`;
+    function supersplatUrl(ply, sceneId) {
+      const settings = encodeURIComponent(`./settings-${sceneId}.json`);
+      return `supersplat/index.html?content=${encodeURIComponent(ply)}&settings=${settings}&webgl&noanim`;
     }
 
     function renderThumbs() {
@@ -639,7 +639,7 @@
       pair.forEach((item, i) => {
         setTimeout(() => {
           if (token !== loadToken) return;
-          item.frame.src = supersplatUrl(item.ply);
+          item.frame.src = supersplatUrl(item.ply, scene.id);
           item.ph.classList.add("hidden");
           if (i === pair.length - 1) {
             splatLoadStatus.textContent =
