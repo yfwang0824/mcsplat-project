@@ -1,0 +1,1078 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="description" content="Interactive comparisons for MCSplat: Multi-View Photometric and Geometric Consistent Feed-Forward Gaussian Splatting for Driving Scenes." />
+  <title>MCSplat: Multi-View Photometric and Geometric Consistent Feed-Forward Gaussian Splatting for Driving Scenes</title>
+  <style>
+    :root {
+      --bg: #f4f4f1;
+      --ink: #1a1a1a;
+      --muted: #5c5c5c;
+      --line: #d6d6d0;
+      --panel: #ffffff;
+      --accent: #0b3d5c;
+      --on: #1f6f4a;
+      --off: #8a4b1f;
+    }
+    * { box-sizing: border-box; }
+    html, body {
+      margin: 0;
+      padding: 0;
+      background: var(--bg);
+      color: var(--ink);
+      font-family: "IBM Plex Sans", "Source Sans 3", "Helvetica Neue", Arial, sans-serif;
+      line-height: 1.45;
+    }
+    .wrap {
+      max-width: 1120px;
+      margin: 0 auto;
+      padding: 28px 18px 64px;
+    }
+    header h2 {
+      margin: 0 0 6px;
+      font-size: 1.15rem;
+      font-weight: 650;
+      letter-spacing: -0.02em;
+    }
+    .card-subtitle {
+      margin: 0 0 8px;
+      color: #000;
+      font-size: 1.12rem;
+      font-weight: 700;
+      line-height: 1.3;
+      letter-spacing: -0.01em;
+    }
+    .card-lead {
+      margin: 0 0 14px;
+      color: var(--muted);
+      font-size: 0.95rem;
+      max-width: 72ch;
+    }
+    .page-title {
+      margin: 0 0 16px;
+      text-align: center;
+      color: #000;
+      font-size: clamp(1.45rem, 2.6vw, 1.95rem);
+      font-weight: 800;
+      line-height: 1.25;
+      letter-spacing: -0.02em;
+    }
+    header p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 0.95rem;
+      max-width: 62ch;
+    }
+    .badge {
+      display: inline-block;
+      margin-bottom: 14px;
+      padding: 3px 9px;
+      border: 1px solid var(--line);
+      background: var(--panel);
+      font-size: 0.75rem;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+    section {
+      margin-top: 22px;
+      background: var(--panel);
+      border: 1px solid var(--line);
+      padding: 14px;
+    }
+    .label-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      gap: 12px;
+      margin-bottom: 8px;
+      font-size: 0.82rem;
+      color: var(--muted);
+    }
+    .label-row strong { color: var(--ink); font-weight: 600; }
+    .stage {
+      position: relative;
+      width: 100%;
+      background: #111;
+      overflow: hidden;
+      aspect-ratio: 2590 / 350;
+    }
+    .stage img, .stage canvas {
+      display: block;
+      width: 100%;
+      height: 100%;
+      object-fit: fill;
+      user-select: none;
+      -webkit-user-drag: none;
+    }
+    .compare {
+      position: relative;
+      width: 100%;
+      aspect-ratio: 2590 / 350;
+      overflow: hidden;
+      background: #111;
+      cursor: ew-resize;
+      touch-action: none;
+      container-type: inline-size;
+    }
+    .compare .layer {
+      position: absolute;
+      inset: 0;
+      overflow: hidden;
+    }
+    /* Keep full-frame width; clip via overflow, do NOT shrink the image. */
+    .compare .layer img {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: var(--compare-w, 100cqw);
+      height: 100%;
+      max-width: none;
+      object-fit: fill;
+      user-select: none;
+      -webkit-user-drag: none;
+    }
+    .compare .on-layer {
+      width: 50%;
+      border-right: 2px solid #fff;
+      z-index: 2;
+    }
+    .compare .handle {
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      left: 50%;
+      width: 2px;
+      transform: translateX(-1px);
+      z-index: 3;
+      pointer-events: none;
+    }
+    .compare .handle::after {
+      content: "";
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 28px;
+      height: 28px;
+      border: 2px solid #fff;
+      background: rgba(0,0,0,0.45);
+      border-radius: 50%;
+      transform: translate(-50%, -50%);
+    }
+    .chip {
+      position: absolute;
+      top: 10px;
+      z-index: 4;
+      padding: 3px 8px;
+      font-size: 0.72rem;
+      font-weight: 600;
+      letter-spacing: 0.03em;
+      color: #fff;
+      background: rgba(0,0,0,0.55);
+      pointer-events: none;
+    }
+    .chip.left { left: 10px; }
+    .chip.right { right: 10px; }
+    .chip.on { background: rgba(31,111,74,0.85); }
+    .chip.off { background: rgba(138,75,31,0.85); }
+
+    .controls {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px 18px;
+      align-items: center;
+      margin-top: 12px;
+    }
+    button, .toggle {
+      appearance: none;
+      border: 1px solid var(--line);
+      background: #fafaf7;
+      color: var(--ink);
+      padding: 8px 12px;
+      font: inherit;
+      font-size: 0.88rem;
+      cursor: pointer;
+    }
+    button:hover, .toggle:hover { border-color: #aaa; }
+    button.active {
+      background: var(--accent);
+      border-color: var(--accent);
+      color: #fff;
+    }
+    .toggle-group {
+      display: inline-flex;
+      border: 1px solid var(--line);
+    }
+    .toggle-group button {
+      border: 0;
+      border-right: 1px solid var(--line);
+      min-width: 118px;
+    }
+    .toggle-group button:last-child { border-right: 0; }
+    .toggle-group button.on.active {
+      background: var(--on);
+      border-color: var(--on);
+      color: #fff;
+    }
+    .toggle-group button.off.active {
+      background: var(--off);
+      border-color: var(--off);
+      color: #fff;
+    }
+    .slider-wrap {
+      flex: 1 1 220px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      min-width: 200px;
+    }
+    .slider-wrap label {
+      font-size: 0.8rem;
+      color: var(--muted);
+      white-space: nowrap;
+    }
+    input[type="range"] { width: 100%; }
+    .status {
+      margin-top: 8px;
+      font-size: 0.8rem;
+      color: var(--muted);
+    }
+    .note {
+      margin-top: 18px;
+      font-size: 0.86rem;
+      color: var(--muted);
+    }
+    .note code,
+    .note kbd {
+      font-family: "IBM Plex Mono", ui-monospace, monospace;
+      font-size: 0.84em;
+      background: #eee;
+      padding: 1px 5px;
+    }
+    .note kbd {
+      border: 1px solid #ccc;
+      border-bottom-width: 2px;
+      border-radius: 3px;
+    }
+    .splat-tip {
+      margin: 14px 0 6px;
+      text-align: center;
+      font-size: 0.9rem;
+      font-style: italic;
+      color: #c62828;
+      font-weight: 700;
+    }
+    .splat-tip strong { color: inherit; font-weight: 700; }
+    .splat-tip kbd {
+      font-family: "IBM Plex Mono", ui-monospace, monospace;
+      font-size: 0.9em;
+      font-weight: 700;
+      font-style: normal;
+      color: #c62828;
+      background: #fdecea;
+      padding: 1px 6px;
+      border: 1px solid #ef9a9a;
+      border-bottom-width: 2px;
+      border-radius: 3px;
+    }
+    .splat-load-status {
+      display: block;
+      text-align: center;
+      margin: 0 0 10px;
+      font-size: 0.82rem;
+      color: var(--muted);
+    }
+    .splat-main {
+      border-radius: 0 0 14px 14px;
+      overflow: hidden;
+    }
+    .splat-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      align-items: stretch;
+    }
+    .splat-col {
+      display: flex;
+      flex-direction: column;
+      min-width: 0;
+    }
+    .splat-col-label {
+      margin-bottom: 6px;
+      font-size: 0.82rem;
+      color: var(--muted);
+    }
+    .splat-col-label strong {
+      color: var(--ink);
+      font-weight: 700;
+    }
+    .splat-wrap {
+      position: relative;
+      width: 100%;
+      height: min(56vh, 520px);
+      background: #111;
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      overflow: hidden;
+    }
+    .splat-wrap iframe {
+      display: block;
+      width: 100%;
+      height: 100%;
+      border: 0;
+      background: #111;
+    }
+    .splat-placeholder {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      color: #ddd;
+      background: #161616;
+      z-index: 2;
+      text-align: center;
+      padding: 20px;
+    }
+    .splat-placeholder p {
+      margin: 0;
+      font-size: 0.86rem;
+      color: #bdbdbd;
+      max-width: 36ch;
+    }
+    .splat-placeholder.hidden { display: none; }
+    .scene-picker {
+      margin-top: 18px;
+      padding-top: 16px;
+      border-top: 1px dashed #cfcfc8;
+    }
+    .scene-picker-hint {
+      margin: 0 0 14px;
+      text-align: center;
+      font-size: 0.86rem;
+      font-style: italic;
+      color: var(--muted);
+    }
+    .scene-carousel {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+    }
+    .scene-nav {
+      flex: 0 0 auto;
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      border: 1px solid #d0d0d0;
+      background: #f7f7f5;
+      color: #666;
+      font-size: 1.2rem;
+      line-height: 1;
+      cursor: pointer;
+      display: grid;
+      place-items: center;
+      padding: 0;
+    }
+    .scene-nav:hover { border-color: #999; background: #fff; }
+    .scene-thumbs {
+      display: flex;
+      gap: 14px;
+      overflow-x: auto;
+      padding: 4px 2px 8px;
+      scroll-snap-type: x mandatory;
+      max-width: min(100%, 900px);
+    }
+    .scene-thumb {
+      flex: 0 0 auto;
+      width: 168px;
+      border: 2px solid transparent;
+      border-radius: 12px;
+      padding: 0;
+      background: transparent;
+      cursor: pointer;
+      overflow: hidden;
+      scroll-snap-align: center;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+    }
+    .scene-thumb img {
+      display: block;
+      width: 100%;
+      aspect-ratio: 3 / 2;
+      object-fit: cover;
+      border-radius: 10px;
+    }
+    .scene-thumb.active {
+      border-color: var(--accent);
+      background: var(--accent);
+      color: #fff;
+      box-shadow: 0 0 0 2px rgba(11, 61, 92, 0.18);
+    }
+    .scene-thumb-caption {
+      margin-top: 6px;
+      font-size: 0.78rem;
+      color: var(--muted);
+      text-align: center;
+    }
+    .scene-thumb.active .scene-thumb-caption {
+      color: #fff;
+      font-weight: 650;
+    }
+    .gif-stage {
+      width: 100%;
+      background: #111;
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 220px;
+    }
+    .gif-stage video {
+      display: block;
+      width: 100%;
+      height: auto;
+      max-height: min(70vh, 720px);
+      object-fit: contain;
+      background: #111;
+    }
+    footer {
+      margin-top: 28px;
+      padding-top: 12px;
+      border-top: 1px solid var(--line);
+      font-size: 0.78rem;
+      color: var(--muted);
+    }
+    @media (max-width: 900px) {
+      .splat-row { grid-template-columns: 1fr; }
+      .splat-wrap { height: min(48vh, 420px); }
+      .scene-thumb { width: 140px; }
+    }
+    @media (max-width: 640px) {
+      .page-title { font-size: 1.25rem; }
+      .card-subtitle { font-size: 1.02rem; }
+      .toggle-group button { min-width: 96px; padding: 8px 8px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <h1 class="page-title">MCSplat: Multi-View Photometric and Geometric Consistent Feed-Forward Gaussian Splatting for Driving Scenes</h1>
+
+    <section id="bgtSection">
+      <h2 class="card-subtitle">Bilateral Grid Transformer: appearance correction on / off</h2>
+      <p class="card-lead">
+        Drag the divider (or use the toggle) to compare the same reconstruction in
+        <strong>canonical appearance space</strong> (BGT off) versus after
+        <strong>bilateral-grid correction</strong> (BGT on). Ground truth is shown above for reference.
+      </p>
+      <div class="label-row">
+        <span><strong>Ground truth</strong></span>
+        <span id="bgtSceneLabel">Scene 040</span>
+      </div>
+      <div class="stage" id="gtStage">
+        <img id="gtImg" alt="Ground truth" />
+      </div>
+
+      <div class="label-row" style="margin-top:14px;">
+        <span><strong>Interactive comparison</strong> · left = BGT on · right = BGT off</span>
+        <span id="frameLabel">frame 0 / 197</span>
+      </div>
+      <div class="compare" id="compare" aria-label="Wipe comparison between BGT on and off">
+        <div class="layer off-layer">
+          <img id="offImg" alt="Bilateral grid off (canonical)" />
+        </div>
+        <div class="layer on-layer" id="onLayer">
+          <img id="onImg" alt="Bilateral grid on" />
+        </div>
+        <div class="handle" id="handle"></div>
+        <div class="chip left on">BGT ON</div>
+        <div class="chip right off">BGT OFF</div>
+      </div>
+
+      <div class="controls">
+        <button id="playBtn" type="button">Pause</button>
+        <div class="toggle-group" role="group" aria-label="Bilateral grid mode">
+          <button type="button" class="on active" id="modeOn">BGT ON</button>
+          <button type="button" class="off" id="modeOff">BGT OFF</button>
+        </div>
+        <div class="slider-wrap">
+          <label for="wipe">Wipe</label>
+          <input id="wipe" type="range" min="0" max="100" value="50" />
+        </div>
+        <div class="slider-wrap">
+          <label for="seek">Seek</label>
+          <input id="seek" type="range" min="0" max="197" value="0" />
+        </div>
+      </div>
+      <div class="status" id="status">Loading frames…</div>
+
+      <div class="scene-picker">
+        <p class="scene-picker-hint">Select a front-camera preview below to switch the BGT comparison above.</p>
+        <div class="scene-carousel">
+          <button type="button" class="scene-nav" id="bgtPrev" aria-label="Previous BGT scene">‹</button>
+          <div class="scene-thumbs" id="bgtThumbs" role="listbox" aria-label="BGT scene previews"></div>
+          <button type="button" class="scene-nav" id="bgtNext" aria-label="Next BGT scene">›</button>
+        </div>
+      </div>
+    </section>
+
+    <section id="splatSection">
+      <h2 class="card-subtitle">Interactive Gaussian comparison · UniSplat vs MCSplat</h2>
+      <div class="label-row">
+        <span></span>
+        <span id="splatSceneLabel">Scene 070 · frame 000000</span>
+      </div>
+
+      <div class="splat-main">
+        <div class="splat-row">
+          <div class="splat-col">
+            <div class="splat-col-label"><strong>UniSplat</strong></div>
+            <div class="splat-wrap">
+              <div class="splat-placeholder" id="splatPhUni">
+                <p>Loading SuperSplat…</p>
+              </div>
+              <iframe
+                id="splatFrameUni"
+                title="UniSplat SuperSplat viewer"
+                allow="fullscreen; xr-spatial-tracking"
+              ></iframe>
+            </div>
+          </div>
+          <div class="splat-col">
+            <div class="splat-col-label"><strong>MCSplat</strong></div>
+            <div class="splat-wrap">
+              <div class="splat-placeholder" id="splatPhMc">
+                <p>Loading SuperSplat…</p>
+              </div>
+              <iframe
+                id="splatFrameMc"
+                title="MCSplat SuperSplat viewer"
+                allow="fullscreen; xr-spatial-tracking"
+              ></iframe>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <p class="splat-tip">
+        <strong>Tip: hover a viewer and press <kbd>F</kbd> to frame · drag to orbit · scroll to zoom · right-drag to pan</strong>
+      </p>
+      <span class="splat-load-status" id="splatLoadStatus">Loading Gaussian scenes…</span>
+
+      <div class="scene-picker">
+        <p class="scene-picker-hint">Select a scene preview below to switch the Gaussian comparison above.</p>
+        <div class="scene-carousel">
+          <button type="button" class="scene-nav" id="scenePrev" aria-label="Previous scene">‹</button>
+          <div class="scene-thumbs" id="sceneThumbs" role="listbox" aria-label="Scene previews"></div>
+          <button type="button" class="scene-nav" id="sceneNext" aria-label="Next scene">›</button>
+        </div>
+      </div>
+    </section>
+
+    <section id="gifSection">
+      <h2 class="card-subtitle">Cross lane NVS comparison · UniSplat vs MCSplat</h2>
+      <div class="label-row">
+        <span></span>
+        <span id="gifSceneLabel">Scene 018</span>
+      </div>
+      <div class="gif-stage">
+        <video
+          id="gifVideo"
+          autoplay
+          muted
+          loop
+          playsinline
+          preload="auto"
+          controls
+        ></video>
+      </div>
+      <div class="scene-picker">
+        <p class="scene-picker-hint">Select a preview below to switch the comparison GIF above.</p>
+        <div class="scene-carousel">
+          <button type="button" class="scene-nav" id="gifPrev" aria-label="Previous GIF scene">‹</button>
+          <div class="scene-thumbs" id="gifThumbs" role="listbox" aria-label="GIF scene previews"></div>
+          <button type="button" class="scene-nav" id="gifNext" aria-label="Next GIF scene">›</button>
+        </div>
+      </div>
+    </section>
+
+    <footer>
+      MCSplat interactive demo · <a href="https://github.com/yfwang0824/yfwang-MCSplat">GitHub repository</a>
+    </footer>
+  </div>
+
+  <script>
+    const FPS = 10;
+    const PAD = 4;
+    const BGT_SCENES = [
+      {
+        id: "040",
+        label: "Scene 040",
+        n: 198,
+        thumb: "assets/thumbs/bgt_scene_040.jpg",
+      },
+      {
+        id: "050",
+        label: "Scene 050",
+        n: 197,
+        thumb: "assets/thumbs/bgt_scene_050.jpg",
+      },
+      {
+        id: "199",
+        label: "Scene 199",
+        n: 198,
+        thumb: "assets/thumbs/bgt_scene_199.jpg",
+      },
+    ];
+
+    const gtImg = document.getElementById("gtImg");
+    const onImg = document.getElementById("onImg");
+    const offImg = document.getElementById("offImg");
+    const onLayer = document.getElementById("onLayer");
+    const handle = document.getElementById("handle");
+    const compare = document.getElementById("compare");
+    const wipe = document.getElementById("wipe");
+    const seek = document.getElementById("seek");
+    const playBtn = document.getElementById("playBtn");
+    const modeOn = document.getElementById("modeOn");
+    const modeOff = document.getElementById("modeOff");
+    const status = document.getElementById("status");
+    const frameLabel = document.getElementById("frameLabel");
+    const bgtSceneLabel = document.getElementById("bgtSceneLabel");
+    const bgtThumbs = document.getElementById("bgtThumbs");
+    const bgtPrev = document.getElementById("bgtPrev");
+    const bgtNext = document.getElementById("bgtNext");
+
+    let bgtIndex = 0;
+    let N = BGT_SCENES[0].n;
+    let sceneId = BGT_SCENES[0].id;
+    let cache = { gt: new Array(N), on: new Array(N), off: new Array(N) };
+    let frame = 0;
+    let playing = true;
+    let lastTs = 0;
+    let loaded = 0;
+    let wipeFrac = 0.5;
+    let fullMode = null; // null = wipe, 'on' | 'off' = full frame
+    let started = false;
+    let tickStarted = false;
+    let preloadToken = 0;
+    const CONCURRENCY = 12;
+
+    function syncCompareWidth() {
+      compare.style.setProperty("--compare-w", compare.clientWidth + "px");
+    }
+    syncCompareWidth();
+    window.addEventListener("resize", syncCompareWidth);
+
+    function framePath(kind, i) {
+      return `assets/frames/${sceneId}/${kind}/${String(i).padStart(PAD, "0")}.jpg`;
+    }
+
+    function frameReady(i) {
+      return !!(cache.gt[i] && cache.on[i] && cache.off[i]);
+    }
+
+    function preload(token) {
+      const kinds = [
+        ["gt", "gt"],
+        ["on", "bgt_on"],
+        ["off", "bgt_off"],
+      ];
+      const total = N * kinds.length;
+      loaded = 0;
+      started = false;
+      const queue = [];
+      for (let i = 0; i < N; i++) {
+        for (const [key, dir] of kinds) queue.push([key, dir, i]);
+      }
+
+      const tryStart = () => {
+        if (token !== preloadToken || started || !frameReady(0)) return;
+        started = true;
+        status.textContent = "Ready · loading remaining frames in background…";
+        showFrame(0);
+        if (!tickStarted) {
+          tickStarted = true;
+          requestAnimationFrame(tick);
+        }
+      };
+
+      const onOneDone = () => {
+        if (token !== preloadToken) return;
+        loaded += 1;
+        tryStart();
+        if (loaded === total) {
+          status.textContent = "Ready · drag the white divider or toggle BGT ON / OFF.";
+        } else if (loaded % 30 === 0 || loaded < 12) {
+          status.textContent = started
+            ? `Playing · buffered ${Math.round((100 * loaded) / total)}%`
+            : `Loading frames… ${Math.round((100 * loaded) / total)}%`;
+        }
+      };
+
+      let active = 0;
+      const pump = () => {
+        if (token !== preloadToken) return;
+        while (active < CONCURRENCY && queue.length) {
+          const [key, dir, i] = queue.shift();
+          active += 1;
+          const img = new Image();
+          img.decoding = "async";
+          img.onload = () => {
+            if (token === preloadToken) cache[key][i] = img;
+            active -= 1;
+            onOneDone();
+            pump();
+          };
+          img.onerror = () => {
+            active -= 1;
+            onOneDone();
+            pump();
+          };
+          img.src = framePath(dir, i);
+        }
+      };
+      pump();
+    }
+
+    function showFrame(i) {
+      if (!N) return;
+      let next = ((i % N) + N) % N;
+      if (!frameReady(next)) {
+        for (let k = 0; k < N; k++) {
+          const j = (next + k) % N;
+          if (frameReady(j)) { next = j; break; }
+        }
+        if (!frameReady(next)) return;
+      }
+      frame = next;
+      gtImg.src = cache.gt[frame].src;
+      onImg.src = cache.on[frame].src;
+      offImg.src = cache.off[frame].src;
+      seek.value = String(frame);
+      frameLabel.textContent = `frame ${frame} / ${N - 1}`;
+      applyWipe();
+    }
+
+    function applyWipe() {
+      if (fullMode === "on") {
+        onLayer.style.width = "100%";
+        handle.style.left = "100%";
+        wipe.value = "100";
+        return;
+      }
+      if (fullMode === "off") {
+        onLayer.style.width = "0%";
+        handle.style.left = "0%";
+        wipe.value = "0";
+        return;
+      }
+      const pct = Math.max(0, Math.min(100, wipeFrac * 100));
+      onLayer.style.width = pct + "%";
+      handle.style.left = pct + "%";
+      wipe.value = String(Math.round(pct));
+    }
+
+    function setMode(mode) {
+      fullMode = mode;
+      modeOn.classList.toggle("active", mode === "on");
+      modeOff.classList.toggle("active", mode === "off");
+      if (mode === "on") wipeFrac = 1;
+      if (mode === "off") wipeFrac = 0;
+      if (mode === null) {
+        modeOn.classList.remove("active");
+        modeOff.classList.remove("active");
+      }
+      applyWipe();
+    }
+
+    function tick(ts) {
+      if (playing && started) {
+        if (!lastTs) lastTs = ts;
+        const dt = ts - lastTs;
+        if (dt >= 1000 / FPS) {
+          const steps = Math.max(1, Math.floor(dt / (1000 / FPS)));
+          lastTs = ts;
+          let target = frame;
+          for (let s = 0; s < steps; s++) {
+            const cand = (target + 1) % N;
+            if (!frameReady(cand)) break;
+            target = cand;
+          }
+          if (target !== frame) showFrame(target);
+        }
+      }
+      requestAnimationFrame(tick);
+    }
+
+    function renderBgtThumbs() {
+      bgtThumbs.innerHTML = "";
+      BGT_SCENES.forEach((scene, i) => {
+        const btn = document.createElement("button");
+        btn.type = "button";
+        btn.className = "scene-thumb" + (i === bgtIndex ? " active" : "");
+        btn.setAttribute("role", "option");
+        btn.setAttribute("aria-selected", i === bgtIndex ? "true" : "false");
+        btn.innerHTML =
+          `<img src="${scene.thumb}" alt="${scene.label} front camera" />` +
+          `<div class="scene-thumb-caption">${scene.label}</div>`;
+        btn.addEventListener("click", () => selectBgtScene(i));
+        bgtThumbs.appendChild(btn);
+      });
+    }
+
+    function selectBgtScene(index) {
+      if (index < 0 || index >= BGT_SCENES.length) return;
+      bgtIndex = index;
+      const scene = BGT_SCENES[bgtIndex];
+      sceneId = scene.id;
+      N = scene.n;
+      frame = 0;
+      lastTs = 0;
+      cache = { gt: new Array(N), on: new Array(N), off: new Array(N) };
+      seek.max = String(N - 1);
+      seek.value = "0";
+      bgtSceneLabel.textContent = scene.label;
+      frameLabel.textContent = `frame 0 / ${N - 1}`;
+      status.textContent = `Loading ${scene.label}…`;
+      renderBgtThumbs();
+      const active = bgtThumbs.querySelector(".scene-thumb.active");
+      if (active) active.scrollIntoView({ behavior: "smooth", inline: "center", block: "nearest" });
+      const token = ++preloadToken;
+      preload(token);
+      syncCompareWidth();
+    }
+
+    playBtn.addEventListener("click", () => {
+      playing = !playing;
+      playBtn.textContent = playing ? "Pause" : "Play";
+      lastTs = 0;
+    });
+    modeOn.addEventListener("click", () => setMode("on"));
+    modeOff.addEventListener("click", () => setMode("off"));
+    wipe.addEventListener("input", () => {
+      fullMode = null;
+      modeOn.classList.remove("active");
+      modeOff.classList.remove("active");
+      wipeFrac = Number(wipe.value) / 100;
+      applyWipe();
+    });
+    seek.addEventListener("input", () => {
+      playing = false;
+      playBtn.textContent = "Play";
+      showFrame(Number(seek.value));
+    });
+
+    function pointerFrac(ev) {
+      const rect = compare.getBoundingClientRect();
+      const x = ("touches" in ev ? ev.touches[0].clientX : ev.clientX) - rect.left;
+      return Math.max(0, Math.min(1, x / rect.width));
+    }
+    let dragging = false;
+    const startDrag = (ev) => {
+      dragging = true;
+      fullMode = null;
+      modeOn.classList.remove("active");
+      modeOff.classList.remove("active");
+      wipeFrac = pointerFrac(ev);
+      applyWipe();
+    };
+    const moveDrag = (ev) => {
+      if (!dragging) return;
+      wipeFrac = pointerFrac(ev);
+      applyWipe();
+    };
+    const endDrag = () => { dragging = false; };
+    compare.addEventListener("mousedown", startDrag);
+    window.addEventListener("mousemove", moveDrag);
+    window.addEventListener("mouseup", endDrag);
+    compare.addEventListener("touchstart", (e) => { startDrag(e); }, { passive: true });
+    window.addEventListener("touchmove", (e) => { if (dragging) { e.preventDefault(); moveDrag(e); } }, { passive: false });
+    window.addEventListener("touchend", endDrag);
+
+    bgtPrev.addEventListener("click", () => {
+      selectBgtScene((bgtIndex - 1 + BGT_SCENES.length) % BGT_SCENES.length);
+    });
+    bgtNext.addEventListener("click", () => {
+      selectBgtScene((bgtIndex + 1) % BGT_SCENES.length);
+    });
+
+    renderBgtThumbs();
+    selectBgtScene(0);
+
+    const SCENES = [
+      {
+        id: "070",
+        label: "Scene 070",
+        thumb: "assets/thumbs/scene_070.jpg",
+        uni: "../assets/gaussians/unisplat_070_000000.ply",
+        mc: "../assets/gaussians/scene_070_000000.ply",
+      },
+      {
+        id: "040",
+        label: "Scene 040",
+        thumb: "assets/thumbs/scene_040.jpg",
+        uni: "../assets/gaussians/unisplat_040_000000.ply",
+        mc: "../assets/gaussians/mcsplat_040_000000.ply",
+      },
+    ];
+
+    const splatFrameUni = document.getElementById("splatFrameUni");
+    const splatFrameMc = document.getElementById("splatFrameMc");
+    const splatPhUni = document.getElementById("splatPhUni");
+    const splatPhMc = document.getElementById("splatPhMc");
+    const splatLoadStatus = document.getElementById("splatLoadStatus");
+    const splatSceneLabel = document.getElementById("splatSceneLabel");
+    const sceneThumbs = document.getElementById("sceneThumbs");
+    const scenePrev = document.getElementById("scenePrev");
+    const sceneNext = document.getElementById("sceneNext");
+    let sceneIndex = 0;
+    let loadToken = 0;
+
+    function supersplatUrl(ply) {
+      const settings = encodeURIComponent("./settings.json");
+      return `supersplat/index.html?content=${encodeURIComponent(ply)}&settings=${settings}&webgl`;
+    }
+
+    function renderThumbs() {
+      sceneThumbs.innerHTML = "";
+      SCENES.forEach((scene, i) => {
+        const btn = document.createElement("button");
+        btn.type = "button";
+        btn.className = "scene-thumb" + (i === sceneIndex ? " active" : "");
+        btn.setAttribute("role", "option");
+        btn.setAttribute("aria-selected", i === sceneIndex ? "true" : "false");
+        btn.innerHTML =
+          `<img src="${scene.thumb}" alt="${scene.label} preview" />` +
+          `<div class="scene-thumb-caption">${scene.label}</div>`;
+        btn.addEventListener("click", () => selectScene(i));
+        sceneThumbs.appendChild(btn);
+      });
+    }
+
+    function selectScene(index) {
+      if (index < 0 || index >= SCENES.length) return;
+      sceneIndex = index;
+      const scene = SCENES[sceneIndex];
+      splatSceneLabel.textContent = `${scene.label} · frame 000000`;
+      renderThumbs();
+      loadSceneViewers(scene);
+      const active = sceneThumbs.querySelector(".scene-thumb.active");
+      if (active) active.scrollIntoView({ behavior: "smooth", inline: "center", block: "nearest" });
+    }
+
+    function loadSceneViewers(scene) {
+      const token = ++loadToken;
+      splatPhUni.classList.remove("hidden");
+      splatPhMc.classList.remove("hidden");
+      splatPhUni.querySelector("p").textContent = "Loading SuperSplat…";
+      splatPhMc.querySelector("p").textContent = "Loading SuperSplat…";
+      splatLoadStatus.textContent = `Loading ${scene.label}…`;
+
+      // Clear previous viewers first to free GPU/memory.
+      splatFrameUni.removeAttribute("src");
+      splatFrameMc.removeAttribute("src");
+
+      const pair = [
+        { frame: splatFrameUni, ph: splatPhUni, ply: scene.uni, name: "UniSplat" },
+        { frame: splatFrameMc, ph: splatPhMc, ply: scene.mc, name: "MCSplat" },
+      ];
+      pair.forEach((item, i) => {
+        setTimeout(() => {
+          if (token !== loadToken) return;
+          item.frame.src = supersplatUrl(item.ply);
+          item.ph.classList.add("hidden");
+          if (i === pair.length - 1) {
+            splatLoadStatus.textContent =
+              `${scene.label} ready · press F inside a viewer to frame`;
+          } else {
+            splatLoadStatus.textContent = `Loading ${scene.label}… ${item.name}`;
+          }
+        }, i * 900);
+      });
+    }
+
+    scenePrev.addEventListener("click", () => {
+      selectScene((sceneIndex - 1 + SCENES.length) % SCENES.length);
+    });
+    sceneNext.addEventListener("click", () => {
+      selectScene((sceneIndex + 1) % SCENES.length);
+    });
+
+    renderThumbs();
+    selectScene(0);
+
+    const GIF_SCENES = [
+      {
+        id: "018",
+        label: "Scene 018",
+        thumb: "assets/thumbs/gif_scene_018.jpg",
+        src: "assets/gifs/scene_018.mp4",
+      },
+      {
+        id: "027",
+        label: "Scene 027",
+        thumb: "assets/thumbs/gif_scene_027.jpg",
+        src: "assets/gifs/scene_027.mp4",
+      },
+    ];
+    const gifVideo = document.getElementById("gifVideo");
+    const gifSceneLabel = document.getElementById("gifSceneLabel");
+    const gifThumbs = document.getElementById("gifThumbs");
+    const gifPrev = document.getElementById("gifPrev");
+    const gifNext = document.getElementById("gifNext");
+    let gifIndex = 0;
+
+    function renderGifThumbs() {
+      gifThumbs.innerHTML = "";
+      GIF_SCENES.forEach((scene, i) => {
+        const btn = document.createElement("button");
+        btn.type = "button";
+        btn.className = "scene-thumb" + (i === gifIndex ? " active" : "");
+        btn.setAttribute("role", "option");
+        btn.setAttribute("aria-selected", i === gifIndex ? "true" : "false");
+        btn.innerHTML =
+          `<img src="${scene.thumb}" alt="${scene.label} preview" />` +
+          `<div class="scene-thumb-caption">${scene.label}</div>`;
+        btn.addEventListener("click", () => selectGifScene(i));
+        gifThumbs.appendChild(btn);
+      });
+    }
+
+    function selectGifScene(index) {
+      if (index < 0 || index >= GIF_SCENES.length) return;
+      gifIndex = index;
+      const scene = GIF_SCENES[gifIndex];
+      gifSceneLabel.textContent = scene.label;
+      gifVideo.pause();
+      gifVideo.src = scene.src;
+      gifVideo.load();
+      const play = () => {
+        const p = gifVideo.play();
+        if (p && typeof p.catch === "function") p.catch(() => {});
+      };
+      if (gifVideo.readyState >= 2) play();
+      else gifVideo.addEventListener("loadeddata", play, { once: true });
+      renderGifThumbs();
+      const active = gifThumbs.querySelector(".scene-thumb.active");
+      if (active) active.scrollIntoView({ behavior: "smooth", inline: "center", block: "nearest" });
+    }
+
+    gifPrev.addEventListener("click", () => {
+      selectGifScene((gifIndex - 1 + GIF_SCENES.length) % GIF_SCENES.length);
+    });
+    gifNext.addEventListener("click", () => {
+      selectGifScene((gifIndex + 1) % GIF_SCENES.length);
+    });
+
+    renderGifThumbs();
+    selectGifScene(0);
+  </script>
+</body>
+</html>
