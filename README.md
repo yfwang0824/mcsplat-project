@@ -4,7 +4,7 @@
 
 **NeurIPS2026**
 
-[Project Page](https://yfwang0824.github.io/yfwang-MCSplat/)
+[Project Page](https://yfwang0824.github.io/mcsplat-project/)
 
 MCSplat is a multi-view consistent feed-forward Gaussian splatting framework for driving-scene reconstruction from sparse multi-view images.
 
