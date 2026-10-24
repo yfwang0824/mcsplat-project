@@ -99,6 +99,12 @@ section {
 .abstract-copy p { margin: 0 0 15px; }
 .abstract-copy p:last-child { margin-bottom: 0; }
 .abstract-copy strong { color: #234fbd; }
+.citation-code {
+  margin: 0; padding: 20px; border: 1px solid #dce5f3; border-radius: 12px;
+  background: #f3f6fc; color: #344760; font-size: 13px; line-height: 1.8;
+  white-space: pre-wrap; overflow-wrap: anywhere;
+}
+.citation-code code { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; }
 .section-heading { display: flex; justify-content: space-between; align-items: flex-end; gap: 24px; margin-bottom: 24px; }
 .pipeline-figure { margin: 0; }
 .pipeline-image { display: block; background: white; border: 1px solid #e1e8f3; border-radius: 14px; overflow: hidden; }
